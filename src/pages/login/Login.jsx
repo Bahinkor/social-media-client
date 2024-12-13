@@ -1,4 +1,5 @@
 import {useState, useRef, useEffect} from "react";
+import {Helmet} from "react-helmet";
 import apiClient from "./../../../config/axios.jsx";
 import swal from "sweetalert2";
 import "./../../../public/css/index.css";
@@ -72,6 +73,12 @@ export default function Login() {
 
     return (
         <>
+            {/* start meta tag */}
+            <Helmet>
+                <title>Social Media | Login</title>
+            </Helmet>
+            {/* finish meta tag */}
+
             <div className="auth-page">
                 <section id="auth-container">
 
