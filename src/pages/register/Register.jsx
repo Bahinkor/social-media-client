@@ -76,7 +76,7 @@ export default function Register() {
                 new swal({
                     title: "Error",
                     icon: "error",
-                    text: "Username or password not match.",
+                    text: "Username or email already exists.",
                     buttons: "ok",
                 });
             }
@@ -219,7 +219,7 @@ export default function Register() {
                                 </span>
                                 <span>
                                     <strong>
-                                        <a href="#" className="text-indigo-700">
+                                        <a href="/auth/login" className="text-indigo-700">
                                             login to account
                                         </a>
                                     </strong>

@@ -150,7 +150,7 @@ export default function Login() {
                                 </span>
                                 <span>
                                     <strong>
-                                        <a href="#" className="text-indigo-700">
+                                        <a href="/auth/forget-password" className="text-indigo-700">
                                             recovery
                                         </a>
                                     </strong>
