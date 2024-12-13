@@ -1,17 +1,43 @@
-import {useState} from "react";
+import {useState, useRef, useEffect} from "react";
+import apiClient from "../../../config/axios.jsx";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
 
 export default function Login() {
+    // state
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
+
+    // ref
+    const identifierFocus = useRef(null);
+
+    // useEffect
+    useEffect(() => {
+        identifierFocus.current.focus();
+
+    }, []);
+
+    // func
+    const submitHandler = async e => {
+        e.preventDefault();
+
+        const userLoginData = {
+            username: identifier,
+            password,
+        };
+
+        const res = await apiClient.post("/auth/login", userLoginData);
+        const data = res.data;
+        console.log("res =>", res);
+        console.log("data =>", data);
+    };
 
     return (
         <>
             <div className="auth-page">
                 <section id="auth-container">
 
-                    <form id="auth-form" action="#">
+                    <form id="auth-form" action="#" onSubmit={submitHandler}>
                         <header>
                             <h2 className="text-3xl">
                                 Welcome back 🌞
@@ -29,6 +55,7 @@ export default function Login() {
                                            placeholder="Please enter the your username..."
                                            value={identifier}
                                            onChange={e => setIdentifier(e.target.value)}
+                                           ref={identifierFocus}
                                     />
                                     <span className="absolute left-2 top-4 text-gray-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
