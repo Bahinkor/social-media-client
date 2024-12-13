@@ -1,5 +1,6 @@
 import {useState, useRef, useEffect} from "react";
 import {Helmet} from "react-helmet";
+import {useParams} from "react-router-dom";
 import apiClient from "./../../../config/axios.jsx";
 import swal from "sweetalert2";
 import "./../../../public/css/index.css";
@@ -7,14 +8,17 @@ import "./../../../public/css/styles.css";
 
 export default function Register() {
     // state
-    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     // ref
-    const emailFocus = useRef(null);
+    const passwordFocus = useRef(null);
+
+    // params
+    const {token} = useParams();
 
     // useEffect
     useEffect(() => {
-        emailFocus.current.focus();
+        passwordFocus.current.focus();
 
     }, []);
 
@@ -23,21 +27,34 @@ export default function Register() {
         e.preventDefault();
 
         const userData = {
-            email,
+            password,
+            token,
         };
 
+        if (password.length < 6) {
+            new swal({
+                title: "Warning!",
+                icon: "warning",
+                text: "The password must be longer than 6 characters.",
+                button: "ok",
+            });
+        }
+
         try {
-            const res = await apiClient.post("/auth/forget-password", userData);
+            const res = await apiClient.post("/auth/reset-password", userData);
 
             if (res.status === 200) {
                 new swal({
                     title: "Success",
                     icon: "success",
-                    text: "The password reset link has been successfully sent to your email.",
+                    text: "Reset password successfully.",
                     button: "ok",
                 });
 
-                setEmail("");
+                setTimeout(() => {
+                    window.location.href = "/auth/login";
+                }, 2000);
+
             }
 
         } catch (err) {
@@ -52,7 +69,7 @@ export default function Register() {
                 new swal({
                     title: "Error",
                     icon: "error",
-                    text: "Email not found.",
+                    text: "Token not valid or expired.",
                     button: "ok",
                 });
             }
@@ -63,7 +80,7 @@ export default function Register() {
         <>
             {/* start meta tag */}
             <Helmet>
-                <title>Social Media | Forget password</title>
+                <title>Social Media | Reset password</title>
             </Helmet>
             {/* finish meta tag */}
 
@@ -73,7 +90,7 @@ export default function Register() {
                     <form id="auth-form" action="#" onSubmit={submitHandler}>
                         <header>
                             <h2 className="text-3xl">
-                                Forget Password 🛟
+                                Reset Password 🎃
                             </h2>
                         </header>
 
@@ -81,14 +98,14 @@ export default function Register() {
 
                             <div className="auth-input-card">
                                 <label htmlFor="login_email" className="font-Poppins-Medium">
-                                    Email Address
+                                    New Password
                                 </label>
                                 <div className="relative flex input-card items-center">
-                                    <input id="login_email" type="email" className="auth-input"
-                                           placeholder="Please enter the your email"
-                                           value={email}
-                                           onChange={e => setEmail(e.target.value)}
-                                           ref={emailFocus}
+                                    <input id="login_email" type="password" className="auth-input"
+                                           placeholder="Please enter the new password"
+                                           value={password}
+                                           onChange={e => setPassword(e.target.value)}
+                                           ref={passwordFocus}
                                     />
                                     <span className="absolute left-2 top-4 text-gray-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -100,19 +117,6 @@ export default function Register() {
                                     </span>
                                 </div>
 
-                            </div>
-
-                            <div className="flex items-center gap-1 text-sm">
-                                <span>
-                                    Back?
-                                </span>
-                                <span>
-                                    <strong>
-                                        <a href="/auth/login" className="text-indigo-700">
-                                            login to account
-                                        </a>
-                                    </strong>
-                                </span>
                             </div>
 
                         </main>
