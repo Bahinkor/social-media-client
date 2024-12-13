@@ -1,5 +1,5 @@
 import {useState, useRef, useEffect} from "react";
-import apiClient from "../../../config/axios.jsx";
+import apiClient from "./../../../config/axios.jsx";
 import swal from "sweetalert2";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
@@ -22,6 +22,17 @@ export default function Login() {
     // func
     const submitHandler = async e => {
         e.preventDefault();
+
+        if (identifier.length < 3 || password.length < 6) {
+            new swal({
+                title: "Warning!",
+                icon: "warning",
+                text: "The username must be at least 3 characters long and the password must be at least 6 characters long.",
+                buttons: "ok"
+            });
+
+            return false;
+        }
 
         const userLoginData = {
             username: identifier,
