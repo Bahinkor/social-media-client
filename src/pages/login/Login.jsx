@@ -1,5 +1,6 @@
 import {useState, useRef, useEffect} from "react";
 import apiClient from "../../../config/axios.jsx";
+import swal from "sweetalert2";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
 
@@ -10,6 +11,7 @@ export default function Login() {
 
     // ref
     const identifierFocus = useRef(null);
+    const passwordFocus = useRef(null);
 
     // useEffect
     useEffect(() => {
@@ -26,10 +28,35 @@ export default function Login() {
             password,
         };
 
-        const res = await apiClient.post("/auth/login", userLoginData);
-        const data = res.data;
-        console.log("res =>", res);
-        console.log("data =>", data);
+        try {
+            const res = await apiClient.post("/auth/login", userLoginData);
+
+            if (res.status === 200) {
+                new swal({
+                    title: "Success",
+                    icon: "success",
+                    text: "Login successfully.",
+                    buttons: "ok",
+                });
+            }
+
+        } catch (err) {
+            if (err.response.status === 500) {
+                new swal({
+                    title: "Error",
+                    icon: "error",
+                    text: "Internal Server Error! Try again later.",
+                    buttons: "ok",
+                });
+            } else {
+                new swal({
+                    title: "Error",
+                    icon: "error",
+                    text: "Username or password not match.",
+                    buttons: "ok",
+                });
+            }
+        }
     };
 
     return (
@@ -56,6 +83,12 @@ export default function Login() {
                                            value={identifier}
                                            onChange={e => setIdentifier(e.target.value)}
                                            ref={identifierFocus}
+                                           onKeyPress={e => {
+                                               if (e.key === "Enter") {
+                                                   e.preventDefault();
+                                                   passwordFocus.current.focus();
+                                               }
+                                           }}
                                     />
                                     <span className="absolute left-2 top-4 text-gray-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -79,6 +112,7 @@ export default function Login() {
                                            placeholder="Please enter the your password..."
                                            value={password}
                                            onChange={e => setPassword(e.target.value)}
+                                           ref={passwordFocus}
                                     />
                                     <span className="absolute left-2 top-4 text-gray-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
