@@ -1,7 +1,7 @@
 import {useState, useRef, useEffect} from "react";
 import {Helmet} from "react-helmet";
 import {useParams} from "react-router-dom";
-import apiClient from "./../../../config/axios.jsx";
+import apiClient from "../../../configs/axios.jsx";
 import swal from "sweetalert2";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
