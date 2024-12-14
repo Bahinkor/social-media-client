@@ -50,6 +50,10 @@ export default function Login() {
                     text: "Login successfully.",
                     buttons: "ok",
                 });
+
+                setTimeout(() => {
+                    window.location.href = `/page/${res.data.data.id}`;
+                }, 2000);
             }
 
         } catch (err) {

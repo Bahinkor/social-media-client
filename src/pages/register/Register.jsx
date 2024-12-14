@@ -62,6 +62,10 @@ export default function Register() {
                     text: "Register successfully.",
                     buttons: "ok",
                 });
+
+                setTimeout(() => {
+                    window.location.href = `/page/${res.data.data.id}`;
+                }, 2000);
             }
 
         } catch (err) {
