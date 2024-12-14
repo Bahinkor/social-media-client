@@ -11,15 +11,13 @@ export default function Page() {
     const {userID} = useParams();
 
     // useEffect
-    useEffect(async () => {
-        await getUserData();
-    }, []);
+    useEffect(() => {
+        const getUserData = async () => {
+            const res = await apiClient.get(`/page/${userID}`);
+        };
 
-    // func
-    const getUserData = async () => {
-        const res = await apiClient.get(`/page/${userID}`);
-        console.log(res.data);
-    };
+        getUserData();
+    }, []);
 
     return (
         <>
@@ -262,7 +260,7 @@ export default function Page() {
                                                     </form>
 
                                                     <button
-                                                            className="comment-icon max-w-max">
+                                                        className="comment-icon max-w-max">
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             fill="none"
