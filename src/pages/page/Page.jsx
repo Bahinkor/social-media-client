@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {Helmet} from "react-helmet";
 import apiClient from "./../../../configs/axios.jsx";
@@ -7,6 +7,9 @@ import "./../../../public/css/index.css";
 import "./../../../public/css/profile.css";
 
 export default function Page() {
+    // state
+    const [userData, setUserData] = useState(null);
+
     // params
     const {userID} = useParams();
 
@@ -14,10 +17,13 @@ export default function Page() {
     useEffect(() => {
         const getUserData = async () => {
             const res = await apiClient.get(`/page/${userID}`);
+            setUserData(res.data);
         };
 
         getUserData();
-    }, []);
+    }, [userID]);
+
+    const profilePic = userData?.page.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}` : "/images/default-profile.jpg";
 
     return (
         <>
@@ -69,7 +75,7 @@ export default function Page() {
                                     className="w-full h-full bg-transparent border-none"
                                 >
                                     <img
-                                        src="./../../../public/images/default-profile.jpg"
+                                        src={profilePic}
                                         className="object-cover"
                                         alt="profile cover"
                                     />
