@@ -187,7 +187,7 @@ export default function Page() {
                                     <div className="w-full">
                                         <main>
                                             <h5 className="feed-username">
-                                    <span style="display: flex; justify-content: space-between">
+                                    <span style={{display: "flex", justifyContent: "space-between"}}>
                                         <strong> hello world </strong>
                                         <div className="relative">
                                             <button className="profile-more-button">
@@ -261,7 +261,7 @@ export default function Page() {
                                                         </button>
                                                     </form>
 
-                                                    <button onClick="commentIconClickHandler('<%= post._id %>')"
+                                                    <button
                                                             className="comment-icon max-w-max">
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -299,13 +299,11 @@ export default function Page() {
                                                 </div>
                                                 <div className="text-sm my-2">
                                                     <span> Liked by </span>
-                                                    <span>
-                                            <strong> </strong>
-                                        </span>
+                                                    <span></span>
                                                     <span> and </span>
                                                     <span>
-                                            <strong> 2,923 others </strong>
-                                        </span>
+                                                        <strong> 2,923 others </strong>
+                                                    </span>
                                                 </div>
                                                 <div>
                                                     <p className="text-gray-700">
@@ -346,7 +344,7 @@ export default function Page() {
                     <aside className="profile-sidebar">
                         <section className="profile-side-card shadow">
                             <header className="flex justify-between">
-                                <h5 className="side-title" style="font-size: 16px">People to follow</h5>
+                                <h5 className="side-title" style={{fontSize: "16px"}}>People to follow</h5>
                                 <div>
                                     <button>
                                         <svg
@@ -443,7 +441,7 @@ export default function Page() {
 
                         <section className="profile-side-card shadow">
                             <header className="flex justify-between">
-                                <h5 className="side-title" style="font-size: 16px">Trending now</h5>
+                                <h5 className="side-title" style={{fontSize: "16px"}}>Trending now</h5>
                                 <div>
                                     <button>
                                         <svg
@@ -574,7 +572,7 @@ export default function Page() {
 
                         <section className="profile-side-card shadow">
                             <header className="flex justify-between">
-                                <h5 className="side-title" style="font-size: 16px">What is happening</h5>
+                                <h5 className="side-title" style={{fontSize: "16px"}}>What is happening</h5>
                                 <div>
                                     <button>
                                         <svg
@@ -677,7 +675,7 @@ export default function Page() {
                                 </div>
                             </article>
 
-                            <h2 style="text-align: center">You can not access to followers</h2>
+                            <h2 style={{textAlign: "center"}}>You can not access to followers</h2>
                         </main>
                     </section>
                 </section>
@@ -735,9 +733,9 @@ export default function Page() {
                                 </div>
                             </article>
 
-                            <h2 style="text-align: center">No followings !!</h2>
+                            <h2 style={{textAlign: "center"}}>No followings !!</h2>
 
-                            <h2 style="text-align: center">You can not access to followings</h2>
+                            <h2 style={{textAlign: "center"}}>You can not access to followings</h2>
 
                         </main>
                     </section>
