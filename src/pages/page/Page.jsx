@@ -18,6 +18,7 @@ export default function Page() {
         const getUserData = async () => {
             const res = await apiClient.get(`/page/${userID}`);
             setUserData(res.data);
+            console.log(res.data);
         };
 
         getUserData();
@@ -29,7 +30,7 @@ export default function Page() {
         <>
             {/* start meta tags */}
             <Helmet>
-                <title>Social Media | Page</title>
+                <title>Social Media | {userData?.page.name || "Page"}</title>
             </Helmet>
             {/* finish meta tags */}
 
@@ -96,20 +97,20 @@ export default function Page() {
 
                                 {/*Profile Image*/}
                                 <span className="profile-pic-card">
-                            <img src="./../../../public/images/default-profile.jpg" className="profile-pic" alt=""/>
+                            <img src={profilePic} className="profile-pic" alt="profile image"/>
                         </span>
                             </header>
                             <main className="profile-main">
                                 <div className="flex justify-between">
                                     <div>
                                         <h4 id="profile-username" className="text-xl font-Poppins-Bold">
-                                            hello world
+                                            {userData.page.name}
                                         </h4>
 
-                                        <p id="profile-id">hello world</p>
+                                        <p id="profile-id">{userData.page.username}</p>
 
                                         <p className="mt-4" id="profile-caption">
-                                            Hello World!
+                                            @{userData.page.username}
                                         </p>
 
                                         <div className="flex items-center gap-1 mt-3 text">
