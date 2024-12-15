@@ -668,11 +668,11 @@ export default function Page() {
 
                                                 {
                                                     mainUserFollowings.some(user => user._id === follower._id) ? (
-                                                        <button className="follow-button text-xs">Unfollow</button>
+                                                        <button className="follow-button text-xs" onClick={e => unFollowUserHandler(e, follower._id)}>Unfollow</button>
                                                     ) : mainUser === follower._id ? (
                                                         <button className="" type="hidden"></button>
                                                     ) : (
-                                                        <button className="follow-button text-xs">Follow</button>
+                                                        <button className="follow-button text-xs" onClick={e => followUserHandler(e, follower._id)}>Follow</button>
                                                     )
                                                 }
                                             </div>
@@ -743,11 +743,11 @@ export default function Page() {
 
                                                 {
                                                     mainUserFollowings.some(user => user._id === following._id) ? (
-                                                        <button className="follow-button text-xs">Unfollow</button>
+                                                        <button className="follow-button text-xs" onClick={e => unFollowUserHandler(e, following._id)}>Unfollow</button>
                                                     ) : mainUser === following._id ? (
                                                         <button className="" type="hidden"></button>
                                                     ) : (
-                                                        <button className="follow-button text-xs">Follow</button>
+                                                        <button className="follow-button text-xs" onClick={e => followUserHandler(e, following._id)}>Follow</button>
                                                     )
                                                 }
 
