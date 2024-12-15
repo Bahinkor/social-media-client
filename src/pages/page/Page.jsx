@@ -210,26 +210,27 @@ export default function Page() {
 
                             <main id="feeds-container">
                                 {
-                                    userData?.posts.map(post => {
-                                        return (
-                                            <PostCard key={post.user._id} {...post} />
-                                        )
-                                    })
+                                    userData?.posts ? (
+                                        userData?.posts.map(post => {
+                                            return (
+                                                <PostCard key={post.user._id} {...post} />
+                                            )
+                                        })
+                                    ) : (
+                                        <div className="its-empty">
+                                            <div className="font-Poppins-Bold text-lg text-gray-900">
+                                                Aww, Nothing to show :(
+                                            </div>
+                                            <div>
+                                                <img
+                                                    src="./../../../public/images/notfound.png"
+                                                    className="not-found-image"
+                                                    alt="not found"
+                                                />
+                                            </div>
+                                        </div>
+                                    )
                                 }
-
-                                {/* if post empity */}
-                                <div className="its-empty">
-                                    <div className="font-Poppins-Bold text-lg text-gray-900">
-                                        Aww, Nothing to show :(
-                                    </div>
-                                    <div>
-                                        <img
-                                            src="./../../../public/images/notfound.png"
-                                            className="not-found-image"
-                                            alt="not found"
-                                        />
-                                    </div>
-                                </div>
                             </main>
 
                             {/*Footer*/}
@@ -266,18 +267,18 @@ export default function Page() {
                                     <div className="flex items-center gap-2">
                                         <div>
                                             <img
-                                                src="./../../../public/images/rad_front.jpg"
+                                                src="/images/jadi.jpg"
                                                 className="w-15 rounded-full"
                                                 alt=""
                                             />
                                         </div>
                                         <div className="">
                                             <div className="flex items-center gap-1">
-                                                <p className="text-sm font-Poppins-SemiBold">Mr. Saeedi rad</p>
+                                                <p className="text-sm font-Poppins-SemiBold">Reza Bahinkor</p>
                                                 <img src="/images/verify.png" className="w-4" alt=""/>
                                             </div>
                                             <button className="text-xs text-gray-600 max-w-max">
-                                                @rad_front
+                                                @bahinkor
                                             </button>
                                         </div>
                                     </div>
@@ -289,7 +290,7 @@ export default function Page() {
                                     <div className="flex items-center gap-2">
                                         <div>
                                             <img
-                                                src="./../../../public/images/cristiano.png"
+                                                src="/images/cristiano.png"
                                                 className="w-15 h-15 rounded-full"
                                                 alt=""
                                             />
@@ -299,7 +300,7 @@ export default function Page() {
                                                 <p className="text-sm font-Poppins-SemiBold">
                                                     Cristiano ronaldo
                                                 </p>
-                                                <img src="./../../../public/images/verify.png" className="w-4" alt=""/>
+                                                <img src="/images/verify.png" className="w-4" alt=""/>
                                             </div>
                                             <button className="text-xs text-gray-600 max-w-max">
                                                 @cristiano
@@ -398,7 +399,7 @@ export default function Page() {
                                                 />
                                             </svg>
                                         </span>
-                                        <span> #sabzlearn 🌞 </span>
+                                        <span> #programmer 🌞 </span>
                                     </a>
                                 </article>
                                 <article className="p-3">
@@ -419,7 +420,7 @@ export default function Page() {
                                                 />
                                             </svg>
                                         </span>
-                                        <span> #radiogeek 🐱‍🏍 </span>
+                                        <span> #radiogeek ‍🏍 </span>
                                     </a>
                                 </article>
                                 <article className="p-3">
@@ -440,7 +441,7 @@ export default function Page() {
                                                 />
                                             </svg>
                                         </span>
-                                        <span> #master_freelance 🔥 </span>
+                                        <span> #ai 🔥 </span>
                                     </a>
                                 </article>
                                 <article className="p-3">
