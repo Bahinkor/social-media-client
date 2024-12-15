@@ -22,14 +22,65 @@ export default function Page() {
 
     // useEffect
     useEffect(() => {
-        try {
-            const getUserData = async () => {
+        const fetchData = async () => {
+            try {
                 const res = await apiClient.get(`/page/${userID}`);
+
+                if (!res.data.hasAccess) {
+                    new swal({
+                        title: "Warning!",
+                        icon: "warning",
+                        text: "You do not have access to this page.",
+                        button: "ok",
+                    });
+                }
+
                 setUserData(res.data);
                 console.log("user data =>", res.data);
-            };
 
-            getUserData();
+            } catch (err) {
+                new swal({
+                    title: "Error!",
+                    text: "Something went wrong!",
+                    icon: "error",
+                    button: "ok",
+                });
+            }
+
+            try {
+                const res = await apiClient.get(`/page/${userID}/followers`);
+                setUserFollowers(res.data.followers);
+                console.log("user followers =>", res.data.followers);
+
+            } catch (err) {
+                setUserFollowers(false);
+            }
+
+            try {
+                const res = await apiClient.get(`/page/${userID}/followings`);
+                setUserFollowings(res.data.followings);
+                console.log("user followings =>", res.data.followings);
+
+            } catch (err) {
+                setUserFollowings(false);
+            }
+        };
+
+        fetchData();
+
+    }, [userID]);
+
+    const profilePic = userData?.page.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}` : "/images/default-profile.jpg";
+
+    const showCommentsModal = () => {
+        setIsOpenCommentsModal(true);
+    };
+
+    const followUser = async e => {
+        e.preventDefault();
+
+        try {
+            await apiClient.post(`/page/${userID}/follow`);
 
         } catch (err) {
             new swal({
@@ -40,38 +91,25 @@ export default function Page() {
             });
         }
 
-        try {
-            const getUserFollowers = async () => {
-                const res = await apiClient.get(`/page/${userID}/followers`);
-                setUserFollowers(res.data.followers);
-                console.log("user followers =>", res.data.followers);
-            };
+        window.location.reload();
+    };
 
-            getUserFollowers();
-
-        } catch (err) {
-            setUserFollowers(false);
-        }
+    const unFollowUser = async e => {
+        e.preventDefault();
 
         try {
-            const getUserFollowings = async () => {
-                const res = await apiClient.get(`/page/${userID}/followings`);
-                setUserFollowings(res.data.followings);
-                console.log("user followings =>", res.data.followings);
-            };
-
-            getUserFollowings();
+            await apiClient.delete(`/page/${userID}/unfollow`);
 
         } catch (err) {
-            setUserFollowings(false);
+            new swal({
+                title: "Error!",
+                text: "Something went wrong!",
+                icon: "error",
+                button: "ok",
+            });
         }
 
-    }, [userID]);
-
-    const profilePic = userData?.page.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}` : "/images/default-profile.jpg";
-
-    const showCommentsModal = () => {
-        setIsOpenCommentsModal(true);
+        window.location.reload();
     };
 
     return (
@@ -208,8 +246,9 @@ export default function Page() {
 
                                         {
                                             userData?.followed && !userData?.isOwn && (
-                                                <form method="post" action="">
-                                                    <button className="unfollow-button font-Poppins-Bold">
+                                                <form method="post" action="#">
+                                                    <button className="unfollow-button font-Poppins-Bold"
+                                                            onClick={unFollowUser}>
                                                         Unfollow
                                                     </button>
                                                 </form>
@@ -218,8 +257,9 @@ export default function Page() {
 
                                         {
                                             !userData?.followed && !userData?.isOwn && (
-                                                <form method="post" action="">
-                                                    <button className="unfollow-button font-Poppins-Bold">
+                                                <form method="post" action="#">
+                                                    <button className="unfollow-button font-Poppins-Bold"
+                                                            onClick={followUser}>
                                                         Follow
                                                     </button>
                                                 </form>
@@ -245,7 +285,8 @@ export default function Page() {
                                     userData?.posts ? (
                                         userData?.posts.map(post => {
                                             return (
-                                                <PostCard key={post.user._id} {...post} showComments={showCommentsModal} />
+                                                <PostCard key={post.user._id} {...post}
+                                                          showComments={showCommentsModal}/>
                                             )
                                         })
                                     ) : (
