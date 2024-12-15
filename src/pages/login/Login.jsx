@@ -51,6 +51,8 @@ export default function Login() {
                     buttons: "ok",
                 });
 
+                window.localStorage.setItem("id", res.data.data.id);
+
                 setTimeout(() => {
                     window.location.href = `/page/${res.data.data.id}`;
                 }, 2000);

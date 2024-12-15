@@ -16,6 +16,8 @@ export default function Page() {
     const [isOpenFollowersModal, setIsOpenFollowersModal] = useState(false);
     const [isOpenFollowingsModal, setIsOpenFollowingsModal] = useState(false);
     const [isOpenCommentsModal, setIsOpenCommentsModal] = useState(false);
+    const [mainUserFollowings, setMainUserFollowings] = useState([]);
+    const [mainUser, setMainUser] = useState(window.localStorage.getItem("id"));
 
     // params
     const {userID} = useParams();
@@ -64,6 +66,19 @@ export default function Page() {
             } catch (err) {
                 setUserFollowings(false);
             }
+
+            try {
+                const res = await apiClient.get(`/page/${mainUser}/followings`);
+                setMainUserFollowings(res.data.followings);
+
+            } catch (err) {
+                new swal({
+                    title: "Error!",
+                    text: "Something went wrong!",
+                    icon: "error",
+                    button: "ok",
+                });
+            }
         };
 
         fetchData();
@@ -76,11 +91,11 @@ export default function Page() {
         setIsOpenCommentsModal(true);
     };
 
-    const followUser = async e => {
+    const followUserHandler = async (e, targetUserID) => {
         e.preventDefault();
 
         try {
-            await apiClient.post(`/page/${userID}/follow`);
+            await apiClient.post(`/page/${targetUserID || userID}/follow`);
 
         } catch (err) {
             new swal({
@@ -94,11 +109,11 @@ export default function Page() {
         window.location.reload();
     };
 
-    const unFollowUser = async e => {
+    const unFollowUserHandler = async (e, targetUserID) => {
         e.preventDefault();
 
         try {
-            await apiClient.delete(`/page/${userID}/unfollow`);
+            await apiClient.delete(`/page/${targetUserID || userID}/unfollow`);
 
         } catch (err) {
             new swal({
@@ -248,7 +263,7 @@ export default function Page() {
                                             userData?.followed && !userData?.isOwn && (
                                                 <form method="post" action="#">
                                                     <button className="unfollow-button font-Poppins-Bold"
-                                                            onClick={unFollowUser}>
+                                                            onClick={unFollowUserHandler}>
                                                         Unfollow
                                                     </button>
                                                 </form>
@@ -259,7 +274,7 @@ export default function Page() {
                                             !userData?.followed && !userData?.isOwn && (
                                                 <form method="post" action="#">
                                                     <button className="unfollow-button font-Poppins-Bold"
-                                                            onClick={followUser}>
+                                                            onClick={followUserHandler}>
                                                         Follow
                                                     </button>
                                                 </form>
@@ -650,8 +665,18 @@ export default function Page() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <button className="follow-button text-xs">Follow</button>
+
+                                                {
+                                                    mainUserFollowings.some(user => user._id === follower._id) ? (
+                                                        <button className="follow-button text-xs">Unfollow</button>
+                                                    ) : mainUser === follower._id ? (
+                                                        <button className="" type="hidden"></button>
+                                                    ) : (
+                                                        <button className="follow-button text-xs">Follow</button>
+                                                    )
+                                                }
                                             </div>
+
                                         </article>
                                     ))
                                 )
@@ -715,7 +740,17 @@ export default function Page() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <button className="follow-button text-xs">Follow</button>
+
+                                                {
+                                                    mainUserFollowings.some(user => user._id === following._id) ? (
+                                                        <button className="follow-button text-xs">Unfollow</button>
+                                                    ) : mainUser === following._id ? (
+                                                        <button className="" type="hidden"></button>
+                                                    ) : (
+                                                        <button className="follow-button text-xs">Follow</button>
+                                                    )
+                                                }
+
                                             </div>
                                         </article>
                                     ))
@@ -747,7 +782,6 @@ export default function Page() {
                                     stroke="currentColor"
                                     className="w-6 h-6"
                                     onClick={() => setIsOpenCommentsModal(false)}>
-                                    >
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
@@ -786,7 +820,7 @@ export default function Page() {
                                 <div className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm">
                                     <div className="flex items-center gap-2 mb-1">
                                         <img
-                                            src="./../../../public/images/default-profile.jpg"
+                                            src="/images/default-profile.jpg"
                                             className="w-9 rounded-full"
                                             alt="Profile Image"
                                         />
