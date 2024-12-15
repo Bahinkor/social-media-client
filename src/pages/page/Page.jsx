@@ -15,6 +15,7 @@ export default function Page() {
     const [userFollowings, setUserFollowings] = useState([]);
     const [isOpenFollowersModal, setIsOpenFollowersModal] = useState(false);
     const [isOpenFollowingsModal, setIsOpenFollowingsModal] = useState(false);
+    const [isOpenCommentsModal, setIsOpenCommentsModal] = useState(false);
 
     // params
     const {userID} = useParams();
@@ -68,6 +69,10 @@ export default function Page() {
     }, [userID]);
 
     const profilePic = userData?.page.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}` : "/images/default-profile.jpg";
+
+    const showCommentsModal = () => {
+        setIsOpenCommentsModal(true);
+    };
 
     return (
         <>
@@ -175,7 +180,8 @@ export default function Page() {
                                             <a href="https://google.com" className="url text-sm"> google.com </a>
                                         </div>
                                         <div className="flex items center gap-4 mt-4">
-                                            <div className="flex items center cursor-pointer gap-1" onClick={() => setIsOpenFollowersModal(true)}>
+                                            <div className="flex items center cursor-pointer gap-1"
+                                                 onClick={() => setIsOpenFollowersModal(true)}>
                                                 <span className="count">{userFollowers.length}</span>
                                                 <span className="text-gray-700 followers">Followers</span>
                                             </div>
@@ -239,7 +245,7 @@ export default function Page() {
                                     userData?.posts ? (
                                         userData?.posts.map(post => {
                                             return (
-                                                <PostCard key={post.user._id} {...post} />
+                                                <PostCard key={post.user._id} {...post} showComments={showCommentsModal} />
                                             )
                                         })
                                     ) : (
@@ -251,7 +257,7 @@ export default function Page() {
                                                 <img
                                                     src="./../../../public/images/notfound.png"
                                                     className="not-found-image"
-                                                    alt="not found"
+                                                    alt="no post"
                                                 />
                                             </div>
                                         </div>
@@ -550,7 +556,8 @@ export default function Page() {
                 <footer className="flex items-center gap-2"></footer>
 
                 {/*Followers Modal*/}
-                <section id="modal" className={`modal-screen followers-modal-screen ${isOpenFollowersModal ? "visible" : ""}`}>
+                <section id="modal"
+                         className={`modal-screen followers-modal-screen ${isOpenFollowersModal ? "visible" : ""}`}>
                     <section id="modal-card">
                         <header
                             id="modal-header"
@@ -558,7 +565,8 @@ export default function Page() {
                         >
                             <div></div>
                             <div className="pl-5">Followers ({userFollowers.length})</div>
-                            <button className="max-w-max flex-center followers-close-button" onClick={() => setIsOpenFollowersModal(false)}>
+                            <button className="max-w-max flex-center followers-close-button"
+                                    onClick={() => setIsOpenFollowersModal(false)}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -678,13 +686,33 @@ export default function Page() {
                 </section>
 
                 {/*Modal*/}
-                <div id="comments-modal" className="modal-screen comments-modal">
+                <div id="comments-modal"
+                     className={`modal-screen comments-modal ${isOpenCommentsModal ? "visible" : ""}`}>
                     <div id="modal-card">
                         <div className="overflow-y-visible" id="comments_modal">
-                            <header className="w-full border-b pb-4 flex-center text-center">
+                            <header className="w-full border-b pb-4 flex-center text-center"
+                                    style={{display: "flex", justifyContent: "space-between"}}>
+                                <p></p>
+
                                 <p>
                                     Comments
                                 </p>
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="1.5"
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                    onClick={() => setIsOpenCommentsModal(false)}>
+                                    >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6 18 18 6M6 6l12 12"
+                                    />
+                                </svg>
                             </header>
                             <main className="mt-4">
                                 <div>

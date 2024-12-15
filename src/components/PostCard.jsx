@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-export default function PostCard({description, hasLike, hasSave, media, user}) {
+export default function PostCard({description, hasLike, hasSave, media, user, showComments}) {
     // state
     const [profilePic, setProfilePic] = useState(user.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${user.profilePicture}` : "/images/default-profile.jpg");
 
@@ -108,6 +108,7 @@ export default function PostCard({description, hasLike, hasSave, media, user}) {
                                         strokeWidth="1.5"
                                         stroke="currentColor"
                                         className="w-6 h-6"
+                                        onClick={showComments}
                                     >
                                         <path
                                             strokeLinecap="round"
