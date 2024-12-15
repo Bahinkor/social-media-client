@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
+import swal from "sweetalert2";
 import {Helmet} from "react-helmet";
 import apiClient from "./../../../configs/axios.jsx";
 import PostCard from "./../../components/PostCard.jsx";
@@ -12,33 +13,57 @@ export default function Page() {
     const [userData, setUserData] = useState(null);
     const [userFollowers, setUserFollowers] = useState([]);
     const [userFollowings, setUserFollowings] = useState([]);
+    const [isOpenFollowersModal, setIsOpenFollowersModal] = useState(false);
+    const [isOpenFollowingsModal, setIsOpenFollowingsModal] = useState(false);
 
     // params
     const {userID} = useParams();
 
     // useEffect
     useEffect(() => {
-        const getUserData = async () => {
-            const res = await apiClient.get(`/page/${userID}`);
-            setUserData(res.data);
-            console.log("user data =>", res.data);
-        };
+        try {
+            const getUserData = async () => {
+                const res = await apiClient.get(`/page/${userID}`);
+                setUserData(res.data);
+                console.log("user data =>", res.data);
+            };
 
-        const getUserFollowers = async () => {
-            const res = await apiClient.get(`/page/${userID}/followers`);
-            setUserFollowers(res.data.followers);
-            console.log("user followers =>", res.data.followers);
-        };
+            getUserData();
 
-        const getUserFollowings = async () => {
-            const res = await apiClient.get(`/page/${userID}/followings`);
-            setUserFollowings(res.data.followings);
-            console.log("user followings =>", res.data.followings);
-        };
+        } catch (err) {
+            new swal({
+                title: "Error!",
+                text: "Something went wrong!",
+                icon: "error",
+                button: "ok",
+            });
+        }
 
-        getUserData();
-        getUserFollowers()
-        getUserFollowings();
+        try {
+            const getUserFollowers = async () => {
+                const res = await apiClient.get(`/page/${userID}/followers`);
+                setUserFollowers(res.data.followers);
+                console.log("user followers =>", res.data.followers);
+            };
+
+            getUserFollowers();
+
+        } catch (err) {
+            setUserFollowers(false);
+        }
+
+        try {
+            const getUserFollowings = async () => {
+                const res = await apiClient.get(`/page/${userID}/followings`);
+                setUserFollowings(res.data.followings);
+                console.log("user followings =>", res.data.followings);
+            };
+
+            getUserFollowings();
+
+        } catch (err) {
+            setUserFollowings(false);
+        }
 
     }, [userID]);
 
@@ -150,16 +175,17 @@ export default function Page() {
                                             <a href="https://google.com" className="url text-sm"> google.com </a>
                                         </div>
                                         <div className="flex items center gap-4 mt-4">
-                                            <div className="flex items center cursor-pointer gap-1">
+                                            <div className="flex items center cursor-pointer gap-1" onClick={() => setIsOpenFollowersModal(true)}>
                                                 <span className="count">{userFollowers.length}</span>
                                                 <span className="text-gray-700 followers">Followers</span>
                                             </div>
                                             <div
                                                 id="followings"
                                                 className="flex items-center cursor-pointer gap-1"
+                                                onClick={() => setIsOpenFollowingsModal(true)}
                                             >
                                                 <span className="count">{userFollowings.length}</span>
-                                                <span className="text-gray-700 followings">Following</span>
+                                                <span className="text-gray-700 followings">Followings</span>
                                             </div>
                                         </div>
                                     </div>
@@ -495,25 +521,25 @@ export default function Page() {
                                     <img src="/images/feed-1.jpg" alt=""/>
                                 </article>
                                 <article className="wh-card">
-                                    <img src="./../../../public/images/feed-3.jpg" alt=""/>
+                                    <img src="/images/feed-3.jpg" alt="image"/>
                                 </article>
                                 <article className="wh-card">
-                                    <img src="./../../../public/images/feed-9.jpg" alt=""/>
+                                    <img src="/images/feed-9.jpg" alt="image"/>
                                 </article>
                                 <article className="wh-card">
-                                    <img src="./../../../public/images/feed-2.jpg" alt=""/>
+                                    <img src="/images/feed-2.jpg" alt="image"/>
                                 </article>
                                 <article className="wh-card">
-                                    <img src="./../../../public/images/feed-4.jpg" alt=""/>
+                                    <img src="/images/feed-4.jpg" alt="image"/>
                                 </article>
                                 <article className="wh-card">
-                                    <img src="./../../../public/images/feed-5.jpg" alt=""/>
+                                    <img src="/images/feed-5.jpg" alt="image"/>
                                 </article>
                                 <article className="wh-card">
-                                    <img src="./../../../public/images/feed-10.jpg" alt=""/>
+                                    <img src="/images/feed-10.jpg" alt="image"/>
                                 </article>
                                 <article className="wh-card">
-                                    <img src="./../../../public/images/feed-8.jpg" alt=""/>
+                                    <img src="/images/feed-8.jpg" alt="image"/>
                                 </article>
                             </main>
                         </section>
@@ -524,15 +550,15 @@ export default function Page() {
                 <footer className="flex items-center gap-2"></footer>
 
                 {/*Followers Modal*/}
-                <section id="modal" className="modal-screen followers-modal-screen">
+                <section id="modal" className={`modal-screen followers-modal-screen ${isOpenFollowersModal ? "visible" : ""}`}>
                     <section id="modal-card">
                         <header
                             id="modal-header"
                             className="w-full pb-4 flex items-center justify-between"
                         >
                             <div></div>
-                            <div className="pl-5">Followers (8)</div>
-                            <button className="max-w-max flex-center followers-close-button">
+                            <div className="pl-5">Followers ({userFollowers.length})</div>
+                            <button className="max-w-max flex-center followers-close-button" onClick={() => setIsOpenFollowersModal(false)}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -550,44 +576,54 @@ export default function Page() {
                             </button>
                         </header>
                         <main className="mt-2">
-                            <article className="following-card">
-                                <div className="flex items-center gap-1">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-12 h-12 rounded-full overflow-hidden">
-                                            <img
-                                                src="./../../../public/images/default-profile.jpg"
-                                                className="w-full object-cover h-full"
-                                                alt="profile image"
-                                            />
-                                        </div>
-                                        <div>
-                                            <h6 className="">hello world</h6>
-                                            <p className="text-sm font-Poppins-Light text-gray-600">
-                                                @helloWorld
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button className="follow-button text-xs">Follow</button>
-                                </div>
-                            </article>
 
-                            <h2 style={{textAlign: "center"}}>You can not access to followers</h2>
+                            {
+                                userFollowers === false ? (
+                                    <h2 style={{textAlign: "center"}}>You can not access to followers</h2>
+                                ) : (
+                                    userFollowers.map(follower => (
+                                        <article key={follower._id} className="following-card">
+                                            <div className="flex items-center gap-1">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                                                        <img
+                                                            src={follower.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${follower.profilePicture}` : "/images/default-profile.jpg"}
+                                                            className="w-full object-cover h-full"
+                                                            alt="profile image"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <h6 className="">{follower.name}</h6>
+                                                        <p className="text-sm font-Poppins-Light text-gray-600">
+                                                            @{follower.username}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button className="follow-button text-xs">Follow</button>
+                                            </div>
+                                        </article>
+                                    ))
+                                )
+                            }
+
                         </main>
                     </section>
                 </section>
 
                 {/*Followings Modal*/}
-                <section id="modal" className="modal-screen followings-modal-screen">
+                <section id="modal"
+                         className={`modal-screen followings-modal-screen ${isOpenFollowingsModal ? "visible" : ""}`}>
                     <section id="modal-card">
                         <header
                             id="modal-header"
                             className="w-full pb-4 flex items-center justify-between"
                         >
                             <div></div>
-                            <div className="pl-5">Followings (7)</div>
-                            <button className="max-w-max flex-center followings-close-button">
+                            <div className="pl-5">Followings ({userFollowings.length})</div>
+                            <button className="max-w-max flex-center followings-close-button"
+                                    onClick={() => setIsOpenFollowingsModal(false)}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -606,34 +642,36 @@ export default function Page() {
                         </header>
                         <main className="mt-2">
 
-                            <article className="following-card">
-                                <div className="flex items-center gap-1">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-12 h-12 rounded-full overflow-hidden">
-
-                                            <img
-                                                src="./../../../public/images/default-profile.jpg"
-                                                className="w-full object-cover h-full"
-                                                alt="profile image"
-                                            />
-
-                                        </div>
-                                        <div>
-                                            <h6 className="">hello world</h6>
-                                            <p className="text-sm font-Poppins-Light text-gray-600">
-                                                @helloWorld
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button className="follow-button text-xs">Follow</button>
-                                </div>
-                            </article>
-
-                            <h2 style={{textAlign: "center"}}>No followings !!</h2>
-
-                            <h2 style={{textAlign: "center"}}>You can not access to followings</h2>
+                            {
+                                userFollowings === false ? (
+                                    <h2 style={{textAlign: "center"}}>You can not access to followings</h2>
+                                ) : (
+                                    userFollowings.map(following => (
+                                        <article key={following._id} className="following-card">
+                                            <div className="flex items-center gap-1">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                                                        <img
+                                                            src={following.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${following.profilePicture}` : "/images/default-profile.jpg"}
+                                                            className="w-full object-cover h-full"
+                                                            alt="profile image"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <h6 className="">{following.name}</h6>
+                                                        <p className="text-sm font-Poppins-Light text-gray-600">
+                                                            @{following.username}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button className="follow-button text-xs">Follow</button>
+                                            </div>
+                                        </article>
+                                    ))
+                                )
+                            }
 
                         </main>
                     </section>
