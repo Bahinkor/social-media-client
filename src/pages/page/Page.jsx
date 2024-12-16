@@ -40,7 +40,6 @@ export default function Page() {
                 }
 
                 setUserData(res.data);
-                console.log("user data =>", res.data);
 
             } catch (err) {
                 new swal({
@@ -54,7 +53,6 @@ export default function Page() {
             try {
                 const res = await apiClient.get(`/page/${userID}/followers`);
                 setUserFollowers(res.data.followers);
-                console.log("user followers =>", res.data.followers);
 
             } catch (err) {
                 setUserFollowers(false);
@@ -63,7 +61,6 @@ export default function Page() {
             try {
                 const res = await apiClient.get(`/page/${userID}/followings`);
                 setUserFollowings(res.data.followings);
-                console.log("user followings =>", res.data.followings);
 
             } catch (err) {
                 setUserFollowings(false);
@@ -200,6 +197,7 @@ export default function Page() {
             const data = res.data;
 
             setComments(data);
+            setIsCommentsModelLoading(false);
 
         } catch (err) {
             return err;
@@ -908,63 +906,66 @@ export default function Page() {
                                     </p>
                                 </div>
 
-                                <div className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <img
-                                            src="/images/default-profile.jpg"
-                                            className="w-9 rounded-full"
-                                            alt="Profile Image"
-                                        />
-                                        <div>
-                                            <span className="text-sm text-gray-600"> Amin </span>
-                                            <p className="text-xs text-gray-500">20 April 2024</p>
-                                        </div>
-                                    </div>
-                                    <div className="ml-6 pl-4 mt-4">
-                                        <q> I love this post :)) </q>
-                                    </div>
-                                    <div className="mt-4 flex-between">
-                                        <div className="flex items-center gap-1">
-                                            <button className="flex items-center gap-1">
-                                                <span>
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth="1.5"
-                                                        stroke="currentColor"
-                                                        className="w-4 text-gray-600 h-5"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
-                                                        />
-                                                    </svg>
-                                                </span>
-                                                <span className="pb-1">+1</span>
-                                            </button>
-                                        </div>
-                                        <button
-                                            className="max-w-max w-8 h-8 flex-center bg-gray-100 rounded-md border"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth="1.5"
-                                                stroke="currentColor"
-                                                className="w-4 h-4 text-gray-600"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
+                                {
+                                    isCommentsModelLoading ? (
+                                        <h2>Loading...</h2>
+                                    ) : (
+                                        <>
+                                            {
+                                                comments.length > 0 ? (
+                                                    comments.map(comment => (
+                                                        <div key={comment._id} className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm">
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <img
+                                                                    src={comment.user.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${comment.user.profilePicture}` : "/images/default-profile.jpg"}
+                                                                    className="w-9 rounded-full"
+                                                                    alt="Profile Image"
+                                                                />
+                                                                <div>
+                                                                    <span
+                                                                        className="text-sm text-gray-600">{comment.user.name}</span>
+                                                                    <p className="text-xs text-gray-500">@{comment.user.username}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="ml-6 pl-4 mt-4">
+                                                                <q>{comment.content}</q>
+                                                            </div>
+                                                            <div className="mt-4 flex-between">
+                                                                <div className="flex items-center gap-1">
+                                                                    <button className="flex items-center gap-1">
+                                                                        <span></span>
+                                                                        <span className="pb-1"></span>
+                                                                    </button>
+                                                                </div>
+                                                                <button
+                                                                    className="max-w-max w-8 h-8 flex-center bg-gray-100 rounded-md border"
+                                                                >
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="none"
+                                                                        viewBox="0 0 24 24"
+                                                                        strokeWidth="1.5"
+                                                                        stroke="currentColor"
+                                                                        className="w-4 h-4 text-gray-600"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                                                                        />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <h2>No Comment</h2>
+                                                )
+                                            }
+                                        </>
+                                    )
+                                }
+
                             </footer>
                         </div>
                     </div>
