@@ -133,7 +133,7 @@ export default function PostCard({_id, description, hasLike, hasSave, media, use
                                 <button
                                     className="comment-icon max-w-max"
                                     onClick={() => {
-                                        showComments();
+                                        showComments(_id, user._id);
                                         getComments(_id, user._id);
                                     }}
                                 >

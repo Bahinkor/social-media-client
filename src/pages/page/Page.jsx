@@ -20,6 +20,10 @@ export default function Page() {
     const [mainUser, setMainUser] = useState(window.localStorage.getItem("id"));
     const [isCommentsModelLoading, setIsCommentsModelLoading] = useState(true);
     const [comments, setComments] = useState([]);
+    const [commentContent, setCommentContent] = useState("");
+    const [commentParentID, setCommentParentID] = useState("");
+    const [postIdForSendComment, setPostIdForSendComment] = useState(null);
+    const [pageIdForSendComment, setPageIdForSendComment] = useState(null);
 
     // params
     const {userID} = useParams();
@@ -86,8 +90,10 @@ export default function Page() {
 
     const profilePic = userData?.page.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}` : "/images/default-profile.jpg";
 
-    const showCommentsModal = () => {
+    const showCommentsModal = (postID, pageID) => {
         setIsOpenCommentsModal(true);
+        setPostIdForSendComment(postID);
+        setPageIdForSendComment(pageID);
     };
 
     const followUserHandler = async (e, targetUserID) => {
@@ -201,6 +207,43 @@ export default function Page() {
 
         } catch (err) {
             return err;
+        }
+    };
+
+    const sendCommentHandler = async (postID) => {
+        try {
+            const res = await apiClient.post("/post/new-comment", {
+                postID,
+                content: commentContent,
+            });
+
+            if (res.status === 201) {
+                new swal({
+                    title: "Success",
+                    text: "Send comment successfully.",
+                    icon: "success",
+                    button: "ok",
+                });
+
+                setCommentContent("");
+                await getPostCommentHandler(postID, pageIdForSendComment);
+
+            } else {
+                new swal({
+                    title: "Error!",
+                    text: "Unknown error!",
+                    icon: "error",
+                    button: "ok",
+                });
+            }
+
+        } catch (err) {
+            new swal({
+                title: "Error!",
+                text: "Something went wrong!",
+                icon: "error",
+                button: "ok",
+            });
         }
     };
 
@@ -883,16 +926,22 @@ export default function Page() {
                                     <p className="text-sm text-gray-700">
                                         Add a comment:
                                     </p>
-                                    <form id="comment-form" method="post" action="/post/new-comment">
+                                    <form id="comment-form" action="#">
                                         <div className="mt-2">
-                                            <textarea name="content"
-                                                      className="w-full  bg-gray-100 p-5 rounded-lg font-light"
-                                                      placeholder="Write something to share ...">
-
+                                            <textarea
+                                                name="content"
+                                                className="w-full  bg-gray-100 p-5 rounded-lg font-light"
+                                                placeholder="Write something to share..."
+                                                value={commentContent}
+                                                onChange={e => setCommentContent(e.target.value)}
+                                            >
                                             </textarea>
                                         </div>
                                         <div className="flex justify-end">
-                                            <button className="button success text-base max-w-max px-3 py-1.5">
+                                            <button className="button success text-base max-w-max px-3 py-1.5" onClick={e => {
+                                                e.preventDefault();
+                                                sendCommentHandler(postIdForSendComment);
+                                            }}>
                                                 SUBMIT
                                             </button>
                                         </div>
@@ -914,7 +963,8 @@ export default function Page() {
                                             {
                                                 comments.length > 0 ? (
                                                     comments.map(comment => (
-                                                        <div key={comment._id} className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm">
+                                                        <div key={comment._id}
+                                                             className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm">
                                                             <div className="flex items-center gap-2 mb-1">
                                                                 <img
                                                                     src={comment.user.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${comment.user.profilePicture}` : "/images/default-profile.jpg"}
@@ -937,24 +987,7 @@ export default function Page() {
                                                                         <span className="pb-1"></span>
                                                                     </button>
                                                                 </div>
-                                                                <button
-                                                                    className="max-w-max w-8 h-8 flex-center bg-gray-100 rounded-md border"
-                                                                >
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                        strokeWidth="1.5"
-                                                                        stroke="currentColor"
-                                                                        className="w-4 h-4 text-gray-600"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
-                                                                        />
-                                                                    </svg>
-                                                                </button>
+                                                                <button></button>
                                                             </div>
                                                         </div>
                                                     ))
