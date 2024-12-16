@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-export default function PostCard({_id, description, hasLike, hasSave, media, user, showComments, likePost, disLikePost, savePost, unSavePost}) {
+export default function PostCard({_id, description, hasLike, hasSave, media, user, showComments, likePost, disLikePost, savePost, unSavePost, getComments}) {
     // state
     const [profilePic, setProfilePic] = useState(user.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${user.profilePicture}` : "/images/default-profile.jpg");
     const [isPostLiked, setIsPostLiked] = useState(hasLike);
@@ -131,7 +131,12 @@ export default function PostCard({_id, description, hasLike, hasSave, media, use
                                 </form>
 
                                 <button
-                                    className="comment-icon max-w-max">
+                                    className="comment-icon max-w-max"
+                                    onClick={() => {
+                                        showComments();
+                                        getComments(_id, user._id);
+                                    }}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -139,7 +144,6 @@ export default function PostCard({_id, description, hasLike, hasSave, media, use
                                         strokeWidth="1.5"
                                         stroke="currentColor"
                                         className="w-6 h-6"
-                                        onClick={showComments}
                                     >
                                         <path
                                             strokeLinecap="round"

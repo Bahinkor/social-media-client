@@ -18,6 +18,8 @@ export default function Page() {
     const [isOpenCommentsModal, setIsOpenCommentsModal] = useState(false);
     const [mainUserFollowings, setMainUserFollowings] = useState([]);
     const [mainUser, setMainUser] = useState(window.localStorage.getItem("id"));
+    const [isCommentsModelLoading, setIsCommentsModelLoading] = useState(true);
+    const [comments, setComments] = useState([]);
 
     // params
     const {userID} = useParams();
@@ -186,6 +188,18 @@ export default function Page() {
             await apiClient.delete("/post/unsave", {
                 data: postIDObj,
             });
+
+        } catch (err) {
+            return err;
+        }
+    };
+
+    const getPostCommentHandler = async (postID, pageID) => {
+        try {
+            const res = await apiClient.get(`/post/${postID}/comments?p=${pageID}`);
+            const data = res.data;
+
+            setComments(data);
 
         } catch (err) {
             return err;
@@ -373,6 +387,7 @@ export default function Page() {
                                                     disLikePost={disLikePostHandler}
                                                     savePost={savePostHandler}
                                                     unSavePost={unSavePostHandler}
+                                                    getComments={getPostCommentHandler}
                                                 />
                                             )
                                         })
