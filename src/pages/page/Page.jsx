@@ -247,6 +247,33 @@ export default function Page() {
         }
     };
 
+    const removePostHandler = async (postID) => {
+        try {
+            const res = await apiClient.delete(`/post/${postID}/remove`);
+
+            if (res.status === 200) {
+                new swal({
+                    title: "Success",
+                    text: "Remove post successfully.",
+                    icon: "success",
+                    button: "ok",
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000)
+            }
+
+        } catch (err) {
+            new swal({
+                title: "Error!",
+                text: "Something went wrong!",
+                icon: "error",
+                button: "ok",
+            });
+        }
+    };
+
     return (
         <>
             {/* start meta tags */}
@@ -429,6 +456,7 @@ export default function Page() {
                                                     savePost={savePostHandler}
                                                     unSavePost={unSavePostHandler}
                                                     getComments={getPostCommentHandler}
+                                                    removePost={removePostHandler}
                                                 />
                                             )
                                         })

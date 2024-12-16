@@ -1,10 +1,11 @@
 import {useState} from "react";
 
-export default function PostCard({_id, description, hasLike, hasSave, media, user, showComments, likePost, disLikePost, savePost, unSavePost, getComments}) {
+export default function PostCard({_id, description, hasLike, hasSave, media, user, showComments, likePost, disLikePost, savePost, unSavePost, getComments, removePost}) {
     // state
     const [profilePic, setProfilePic] = useState(user.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${user.profilePicture}` : "/images/default-profile.jpg");
     const [isPostLiked, setIsPostLiked] = useState(hasLike);
     const [isPostSaved, setIsPostSaved] = useState(hasSave);
+    const [isShowRemovePostButton, setIsShowRemovePostButton] = useState(false);
 
     return (
         <>
@@ -27,7 +28,7 @@ export default function PostCard({_id, description, hasLike, hasSave, media, use
                             }}>
                                 <strong> {user.name} </strong>
                                 <div className="relative">
-                                    <button className="profile-more-button">
+                                    <button className="profile-more-button" onClick={() => setIsShowRemovePostButton(!isShowRemovePostButton)}>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -44,9 +45,12 @@ export default function PostCard({_id, description, hasLike, hasSave, media, use
                                         </svg>
                                     </button>
 
-                                    <div className="dropdown">
+                                    <div className={`dropdown ${isShowRemovePostButton ? "visible" : ""}`}>
                                         <form action="">
-                                            <button type="submit"
+                                            <button type="submit" onClick={e => {
+                                                e.preventDefault();
+                                                removePost(_id);
+                                            }}
                                                     className="remove-button dropdown-item">
                                                 <span className="text-red-500">
                                                     <svg
