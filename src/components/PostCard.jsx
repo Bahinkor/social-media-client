@@ -1,8 +1,10 @@
 import {useState} from "react";
 
-export default function PostCard({description, hasLike, hasSave, media, user, showComments}) {
+export default function PostCard({_id, description, hasLike, hasSave, media, user, showComments, likePost, disLikePost, savePost, unSavePost}) {
     // state
     const [profilePic, setProfilePic] = useState(user.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${user.profilePicture}` : "/images/default-profile.jpg");
+    const [isPostLiked, setIsPostLiked] = useState(hasLike);
+    const [isPostSaved, setIsPostSaved] = useState(hasSave);
 
     return (
         <>
@@ -81,22 +83,51 @@ export default function PostCard({description, hasLike, hasSave, media, user, sh
                                 <form action="" method="post">
                                     <input type="hidden" name="postID"
                                            value="<%= post._id %>"/>
-                                    <button type="submit" className="max-w-max">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill={hasLike ? "red" : "none"}
-                                            viewBox="0 0 24 24"
-                                            strokeWidth="1.5"
-                                            stroke="currentColor"
-                                            className="w-6 h-6"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                                            />
-                                        </svg>
-                                    </button>
+                                    {
+                                        isPostLiked ? (
+                                            <button type="submit" className="max-w-max" onClick={e => {
+                                                e.preventDefault();
+                                                setIsPostLiked(false);
+                                                disLikePost(e, _id);
+                                            }}>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="red"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        ) : (
+                                            <button type="submit" className="max-w-max" onClick={e => {
+                                                e.preventDefault();
+                                                setIsPostLiked(true);
+                                                likePost(e, _id);
+                                            }}>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        )
+                                    }
                                 </form>
 
                                 <button
@@ -118,24 +149,57 @@ export default function PostCard({description, hasLike, hasSave, media, user, sh
                                     </svg>
                                 </button>
 
-                                <form action="/post/save" method="post">
-                                    <input type="hidden" name="postID"
-                                           value="<%= post._id %>"/>
-                                    <button className="max-w-max">
-                                        <svg fill={hasSave ? "black" : "none"}
-                                             viewBox="0 0 24 24"
-                                             strokeWidth="1.5"
-                                             stroke="currentColor"
-                                             className="w-6 h-6"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M5 7.8C5 6.11984 5 5.27976 5.32698 4.63803C5.6146 4.07354 6.07354 3.6146 6.63803 3.32698C7.27976 3 8.11984 3 9.8 3H14.2C15.8802 3 16.7202 3 17.362 3.32698C17.9265 3.6146 18.3854 4.07354 18.673 4.63803C19 5.27976 19 6.11984 19 7.8V21L12 17L5 21V7.8Z"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"/>
-                                        </svg>
-                                    </button>
+                                <form action="#">
+                                    <input
+                                        type="hidden"
+                                        name="postID"
+                                        value="<%= post._id %>"
+                                    />
+
+                                    {
+                                        isPostSaved ? (
+                                            <button className="max-w-max" onClick={e => {
+                                                e.preventDefault();
+                                                setIsPostSaved(false);
+                                                unSavePost(e, _id);
+                                            }}>
+                                                <svg fill="black"
+                                                     viewBox="0 0 24 24"
+                                                     strokeWidth="1.5"
+                                                     stroke="currentColor"
+                                                     className="w-6 h-6"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M5 7.8C5 6.11984 5 5.27976 5.32698 4.63803C5.6146 4.07354 6.07354 3.6146 6.63803 3.32698C7.27976 3 8.11984 3 9.8 3H14.2C15.8802 3 16.7202 3 17.362 3.32698C17.9265 3.6146 18.3854 4.07354 18.673 4.63803C19 5.27976 19 6.11984 19 7.8V21L12 17L5 21V7.8Z"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"/>
+                                                </svg>
+                                            </button>
+                                        ) : (
+                                            <button className="max-w-max" onClick={e => {
+                                                e.preventDefault();
+                                                setIsPostSaved(true);
+                                                savePost(e, _id);
+                                            }}>
+                                                <svg fill="none"
+                                                     viewBox="0 0 24 24"
+                                                     strokeWidth="1.5"
+                                                     stroke="currentColor"
+                                                     className="w-6 h-6"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M5 7.8C5 6.11984 5 5.27976 5.32698 4.63803C5.6146 4.07354 6.07354 3.6146 6.63803 3.32698C7.27976 3 8.11984 3 9.8 3H14.2C15.8802 3 16.7202 3 17.362 3.32698C17.9265 3.6146 18.3854 4.07354 18.673 4.63803C19 5.27976 19 6.11984 19 7.8V21L12 17L5 21V7.8Z"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"/>
+                                                </svg>
+                                            </button>
+                                        )
+                                    }
+
                                 </form>
 
                             </div>

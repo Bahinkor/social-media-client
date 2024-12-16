@@ -127,6 +127,71 @@ export default function Page() {
         window.location.reload();
     };
 
+    const likePostHandler = async (e, postID) => {
+        e.preventDefault();
+
+        const postIDObj = {
+            postID,
+        }
+
+        try {
+            await apiClient.post("/post/like", postIDObj);
+
+        } catch (err) {
+            return err;
+        }
+    };
+
+    const disLikePostHandler = async (e, postID) => {
+        e.preventDefault();
+
+        const postIDObj = {
+            postID,
+        }
+
+
+        try {
+            await apiClient.delete("/post/dislike", {
+                data: postIDObj,
+            });
+
+        } catch (err) {
+            return err;
+        }
+    };
+
+    const savePostHandler = async (e, postID) => {
+        e.preventDefault();
+
+        const postIDObj = {
+            postID,
+        }
+
+        try {
+            await apiClient.post("/post/save", postIDObj);
+
+        } catch (err) {
+            return err;
+        }
+    };
+
+    const unSavePostHandler = async (e, postID) => {
+        e.preventDefault();
+
+        const postIDObj = {
+            postID,
+        }
+
+        try {
+            await apiClient.delete("/post/unsave", {
+                data: postIDObj,
+            });
+
+        } catch (err) {
+            return err;
+        }
+    };
+
     return (
         <>
             {/* start meta tags */}
@@ -300,8 +365,15 @@ export default function Page() {
                                     userData?.posts ? (
                                         userData?.posts.map(post => {
                                             return (
-                                                <PostCard key={post.user._id} {...post}
-                                                          showComments={showCommentsModal}/>
+                                                <PostCard
+                                                    key={post.user._id}
+                                                    {...post}
+                                                    showComments={showCommentsModal}
+                                                    likePost={likePostHandler}
+                                                    disLikePost={disLikePostHandler}
+                                                    savePost={savePostHandler}
+                                                    unSavePost={unSavePostHandler}
+                                                />
                                             )
                                         })
                                     ) : (
@@ -668,11 +740,13 @@ export default function Page() {
 
                                                 {
                                                     mainUserFollowings.some(user => user._id === follower._id) ? (
-                                                        <button className="follow-button text-xs" onClick={e => unFollowUserHandler(e, follower._id)}>Unfollow</button>
+                                                        <button className="follow-button text-xs"
+                                                                onClick={e => unFollowUserHandler(e, follower._id)}>Unfollow</button>
                                                     ) : mainUser === follower._id ? (
                                                         <button className="" type="hidden"></button>
                                                     ) : (
-                                                        <button className="follow-button text-xs" onClick={e => followUserHandler(e, follower._id)}>Follow</button>
+                                                        <button className="follow-button text-xs"
+                                                                onClick={e => followUserHandler(e, follower._id)}>Follow</button>
                                                     )
                                                 }
                                             </div>
@@ -743,11 +817,13 @@ export default function Page() {
 
                                                 {
                                                     mainUserFollowings.some(user => user._id === following._id) ? (
-                                                        <button className="follow-button text-xs" onClick={e => unFollowUserHandler(e, following._id)}>Unfollow</button>
+                                                        <button className="follow-button text-xs"
+                                                                onClick={e => unFollowUserHandler(e, following._id)}>Unfollow</button>
                                                     ) : mainUser === following._id ? (
                                                         <button className="" type="hidden"></button>
                                                     ) : (
-                                                        <button className="follow-button text-xs" onClick={e => followUserHandler(e, following._id)}>Follow</button>
+                                                        <button className="follow-button text-xs"
+                                                                onClick={e => followUserHandler(e, following._id)}>Follow</button>
                                                     )
                                                 }
 
@@ -764,7 +840,7 @@ export default function Page() {
                 {/*Modal*/}
                 <div id="comments-modal"
                      className={`modal-screen comments-modal ${isOpenCommentsModal ? "visible" : ""}`}>
-                    <div id="modal-card">
+                    <div id="modal-card" style={{height: "621px", overflowY: "scroll"}}>
                         <div className="overflow-y-visible" id="comments_modal">
                             <header className="w-full border-b pb-4 flex-center text-center"
                                     style={{display: "flex", justifyContent: "space-between"}}>
