@@ -52,6 +52,8 @@ export default function Page() {
                     icon: "error",
                     button: "ok",
                 });
+
+                window.location.href = "/";
             }
 
             try {
