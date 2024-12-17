@@ -17,14 +17,16 @@
     "react-helmet": "^6.1.0",
     "react-router-dom": "^7.0.2",
     "sweetalert2": "^11.14.5",
+    "typescript": "^5.7.2",
     "yup": "^1.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@fullstacksjs/eslint-config": "^11.5.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^9.16.0",
+    "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
