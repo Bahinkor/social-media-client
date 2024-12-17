@@ -4,14 +4,16 @@ import ForgetPassword from "./pages/forgetPassword/ForgetPassword.jsx";
 import ResetPassword from "./pages/resetPassword/ResetPassword.jsx";
 import Page from "./pages/page/Page.jsx";
 import UploadPost from "./pages/uploadPost/UploadPost.jsx";
+import EditProfile from "./pages/editProfile/EditProfile.jsx";
 
 const routes = [
-    { path: "/auth/login", element: <Login /> },
-    { path: "/auth/register", element: <Register /> },
-    { path: "/auth/forget-password", element: <ForgetPassword /> },
-    { path: "/auth/reset-password/:token", element: <ResetPassword /> },
-    { path: "/page/:userID", element: <Page /> },
-    { path: "/post", element: <UploadPost /> },
+  { path: "/auth/login", element: <Login /> },
+  { path: "/auth/register", element: <Register /> },
+  { path: "/auth/forget-password", element: <ForgetPassword /> },
+  { path: "/auth/reset-password/:token", element: <ResetPassword /> },
+  { path: "/page/:userID", element: <Page /> },
+  { path: "/post", element: <UploadPost /> },
+  { path: "/user/edit-profile", element: <EditProfile /> },
 ];
 
 export default routes;

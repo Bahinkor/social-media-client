@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import apiClient from "./../../../configs/axios.jsx";
 import swal from "sweetalert2";
+import {Helmet} from "react-helmet";
 import uploadPostValidatorSchema from "./validatorSchema.jsx";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
@@ -98,6 +99,12 @@ export default function UploadPost() {
 
   return (
     <>
+      {/* meta tags */}
+      <Helmet>
+        <title>Social Media | Upload Post</title>
+      </Helmet>
+
+      {/* template */}
       <div className="post-upload-body">
         <header>
           <nav className="w-full flex-between  py-5 container">
