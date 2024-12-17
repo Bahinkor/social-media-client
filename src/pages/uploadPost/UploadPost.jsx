@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import apiClient from "./../../../configs/axios.jsx";
 import swal from "sweetalert2";
+import uploadPostValidatorSchema from "./validatorSchema.jsx";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
 import "./../../../public/css/profile.css";
@@ -8,6 +9,9 @@ import "./../../../public/css/profile.css";
 export default function UploadPost() {
   // state
   const [userData, setUserData] = useState(null);
+  const [media, setMedia] = useState(null);
+  const [description, setDescription] = useState("");
+  const [hashtags, setHashtags] = useState("");
 
   // useEffect
   useEffect(() => {
@@ -31,6 +35,66 @@ export default function UploadPost() {
 
     getUserData();
   }, []);
+
+  const sendPostHandler = async () => {
+    const postData = {
+      media,
+      description,
+      hashtags,
+    };
+
+    try {
+      await uploadPostValidatorSchema.validate(
+        { ...postData },
+        {
+          abortEarly: true,
+        },
+      );
+    } catch (err) {
+      new swal({
+        title: "Warning",
+        text: err.errors[0],
+        type: "warning",
+        button: "ok",
+      });
+
+      return false;
+    }
+
+    try {
+      const res = await apiClient.post("/post", postData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (res.status === 201) {
+        new swal({
+          title: "Success",
+          text: "Posted successfully.",
+          type: "success",
+          button: "ok",
+        });
+
+        const userID = window.localStorage.getItem("id");
+        setTimeout(() => {
+          window.location.href = `/page/${userID}`;
+        }, 1000);
+      } else {
+        new swal({
+          title: "Error",
+          text: "Unknown error",
+          type: "error",
+          button: "ok",
+        });
+      }
+    } catch (err) {
+      new swal({
+        title: "Error",
+        text: "Something went wrong",
+        type: "error",
+        button: "ok",
+      });
+    }
+  };
 
   return (
     <>
@@ -130,6 +194,9 @@ export default function UploadPost() {
                     name="media"
                     id="file-upload-input"
                     accept="video/*, image/*"
+                    onChange={(e) => {
+                      setMedia(e.target.files[0]);
+                    }}
                   />
                 </div>
               </div>
@@ -150,6 +217,10 @@ export default function UploadPost() {
                     id="post-description"
                     placeholder="Add a description..."
                     className="w-full mt-4"
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                    }}
                   ></textarea>
                 </div>
 
@@ -157,13 +228,17 @@ export default function UploadPost() {
                 <div className="mt-4">
                   <label htmlFor="post-hashtags">
                     <span>Hashtags</span>
-                    <span className="requre-symbol">*</span>
+                    <span className="requre-symbol"></span>
                   </label>
                   <input
                     type="text"
                     name="hashtags"
                     id="post-hashtags"
                     placeholder="javascript, edit, trend, explore, ne..."
+                    value={hashtags}
+                    onChange={(e) => {
+                      setHashtags(e.target.value);
+                    }}
                   />
                   <div
                     id="hashtags-wrap"
@@ -180,6 +255,10 @@ export default function UploadPost() {
                     type="submit"
                     id="upload-button"
                     className="max-w-max"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      sendPostHandler();
+                    }}
                   >
                     Upload post
                   </button>
