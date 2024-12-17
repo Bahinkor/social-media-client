@@ -459,6 +459,7 @@ export default function Page() {
                                                     unSavePost={unSavePostHandler}
                                                     getComments={getPostCommentHandler}
                                                     removePost={removePostHandler}
+                                                    isOwn={userData?.isOwn}
                                                 />
                                             )
                                         })
