@@ -1,8 +1,105 @@
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
+import swal from "sweetalert2";
+import apiClient from "./../../../configs/axios.jsx";
+import editProfileDataValidatorSchema from "./validatorSchema.jsx";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
 
 export default function EditProfile() {
+  // state
+  const [userData, setUserData] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  // useEffect
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const res = await apiClient.get("/user/edit-profile");
+        const data = res.data.user;
+
+        setUserData(data);
+        setName(data.name);
+        setEmail(data.email);
+        setUsername(data.username);
+      } catch (err) {
+        new swal({
+          title: "Error",
+          icon: "error",
+          text: "Connection error",
+          button: "ok",
+        });
+      }
+    };
+
+    getUserData();
+  }, []);
+
+  const sendProfileDataHandler = async () => {
+    const userData = {
+      name,
+      email,
+      username,
+    };
+
+    const userDataAndProfilePicture = {
+      name,
+      email,
+      username,
+      profilePicture,
+    };
+
+    try {
+      await editProfileDataValidatorSchema.validate(
+        profilePicture === null
+          ? { ...userData }
+          : { ...userDataAndProfilePicture },
+        {
+          abortEarly: true,
+        },
+      );
+    } catch (err) {
+      new swal({
+        title: "Warning",
+        icon: "warning",
+        text: err.errors[0],
+        button: "ok",
+      });
+    }
+
+    try {
+      const res = await apiClient.put(
+        "/user/edit-profile",
+        profilePicture === null
+          ? { ...userData }
+          : { ...userDataAndProfilePicture },
+      );
+
+      if (res.status === 200) {
+        new swal({
+          title: "Success",
+          icon: "success",
+          text: "Update successfully.",
+          button: "ok",
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    } catch (err) {
+      new swal({
+        title: "Error",
+        icon: "error",
+        text: "Unknown error! Please check the submitted values.",
+        button: "ok",
+      });
+    }
+  };
+
   return (
     <>
       {/* meta tags */}
@@ -39,7 +136,11 @@ export default function EditProfile() {
                   className="w-18 h-18 rounded-full overflow-hidden"
                 >
                   <img
-                    src="/images/default-profile.jpg"
+                    src={
+                      userData?.profilePicture
+                        ? `${import.meta.env.VITE_BACKEND_URL}${userData.profilePicture}`
+                        : "/images/default-profile.jpg"
+                    }
                     alt="Profile"
                     className="object-cover"
                   />
@@ -62,6 +163,8 @@ export default function EditProfile() {
                           id="profile-fullName"
                           type="text"
                           placeholder="Full name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
                         />
                       </div>
                     </article>
@@ -78,6 +181,8 @@ export default function EditProfile() {
                           id="profile-username"
                           type="text"
                           placeholder="Username"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
                         />
                       </div>
                     </article>
@@ -92,8 +197,10 @@ export default function EditProfile() {
                           className="profile-edit-input"
                           name="email"
                           id="profile-email"
-                          type="text"
+                          type="email"
                           placeholder="Email address"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                         />
                       </div>
                     </article>
@@ -106,6 +213,7 @@ export default function EditProfile() {
                           className="profile-edit-input"
                           name="profilePicture"
                           type="file"
+                          onChange={(e) => setProfilePicture(e.target.files[0])}
                         />
                       </div>
                     </article>
@@ -116,7 +224,15 @@ export default function EditProfile() {
                     className="flex"
                     id="edit-porile-button-card"
                   >
-                    <button id="edit-profile-button">Save changes</button>
+                    <button
+                      id="edit-profile-button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        sendProfileDataHandler();
+                      }}
+                    >
+                      Save changes
+                    </button>
                   </div>
                 </section>
               </form>
