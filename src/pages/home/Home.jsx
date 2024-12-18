@@ -1,8 +1,35 @@
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
+import swal from "sweetalert2";
+import apiClient from "./../../../configs/axios.jsx";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
 
 export default function Home() {
+  // state
+  const [userData, setUserData] = useState(null);
+
+  // useEffect
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const res = await apiClient.get("/home");
+        const data = res.data;
+
+        setUserData(data.user);
+      } catch (err) {
+        new swal({
+          title: "Error!",
+          icon: "error",
+          text: "Something went wrong",
+          button: "ok",
+        });
+      }
+    };
+
+    getUserData();
+  }, []);
+
   return (
     <>
       {/* meta tags */}
@@ -49,15 +76,18 @@ export default function Home() {
             </a>
             <div className="w-12 h-12 rounded-full overflow-hidden rounded-full">
               <a
-                href="/page/"
+                href={`/page/${userData?._id}`}
                 id="profileButton"
                 className="w-full h-full bg-transparent border-none"
               >
                 <img
-                  src="/images/default-profile.jpg"
-                  className="profile-pic"
-                  alt="profile picture"
-                  style={{ width: "48px", height: "48px" }}
+                  src={
+                    userData?.profilePicture
+                      ? `${import.meta.env.VITE_BACKEND_URL}${userData.profilePicture}`
+                      : "/images/default-profile.jpg"
+                  }
+                  className="object-cover"
+                  alt="profile cover"
                 />
               </a>
             </div>
@@ -73,17 +103,21 @@ export default function Home() {
           <article className="profile-card shadow px-4">
             <div>
               <img
-                src="/images/default-profile.jpg"
+                src={
+                  userData?.profilePicture
+                    ? `${import.meta.env.VITE_BACKEND_URL}${userData.profilePicture}`
+                    : "/images/default-profile.jpg"
+                }
                 className="w-12 h-12 rounded-full"
                 alt="profile picture"
               />
             </div>
             <div>
               <p className="user-profile-name text-gray-900 font-Poppins-Bold text-sm">
-                name
+                {userData?.name}
               </p>
               <p className="font-Poppins-Light text-xs text-gray-500">
-                @ username
+                @{userData?.username}
               </p>
             </div>
           </article>
@@ -112,7 +146,7 @@ export default function Home() {
               </a>
             </div>
             <div>
-              <a className="nav-link" href="javascript:void(0)">
+              <a className="nav-link" href="/">
                 <div className="flex-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +167,7 @@ export default function Home() {
               </a>
             </div>
             <div>
-              <a className="nav-link" href="javascript:void(0)">
+              <a className="nav-link" href="/">
                 <div className="flex-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +188,7 @@ export default function Home() {
               </a>
             </div>
             <div>
-              <a className="nav-link" href="javascript:void(0)">
+              <a className="nav-link" href="/">
                 <div className="relative flex-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +232,7 @@ export default function Home() {
               </a>
             </div>
             <div>
-              <a className="nav-link" href="javascript:void(0)">
+              <a className="nav-link" href="/">
                 <div className="flex-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -222,7 +256,7 @@ export default function Home() {
               <a
                 id="themeButton"
                 className="nav-link"
-                href="javascript:void(0)"
+                href="/"
               >
                 <div className="flex-center">
                   <svg
@@ -244,7 +278,7 @@ export default function Home() {
               </a>
             </div>
             <div>
-              <a className="nav-link" href="javascript:void(0)">
+              <a className="nav-link" href="/">
                 <div className="flex-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -401,27 +435,6 @@ export default function Home() {
               </div>
               <div className="gradient-bg"></div>
             </article>
-          </div>
-
-          {/*Post Create*/}
-          <div>
-            <div id="tweet-card" className="shadow flex ic">
-              <div className="h-full flex-center absolute left-2">
-                <span className="w-8 h-8 rounded-full overflow-hidden">
-                  <img
-                    src="/images/profile-8.jpg"
-                    className="object-cover"
-                    alt=""
-                  />
-                </span>
-              </div>
-              <input
-                type="text"
-                className="tweet-input"
-                placeholder="What's on your mind, Peyman?"
-              />
-              <button id="tweet-button">Post</button>
-            </div>
           </div>
 
           {/*Feeds / Posts*/}
@@ -592,7 +605,6 @@ export default function Home() {
                   <div className="text-sm">
                     <span> Liked by </span>
                     <span>
-                      <strong> rad_front </strong>
                     </span>
                     <span> and </span>
                     <span>
@@ -718,7 +730,7 @@ export default function Home() {
                     </span>
                     <span>
                       <img
-                        src="./images/profile-7.jpg"
+                        src="/images/profile-7.jpg"
                         className="likedBy left-6 z-20"
                         alt=""
                       />
