@@ -31,11 +31,13 @@ export default function PostCard({
       <article className="profile-feed-card">
         <div>
           <header>
-            <img
-              src={profilePic}
-              alt="profile picture"
-              className="feed-profile-picture"
-            />
+            <a href={`/page/${user._id}`}>
+              <img
+                src={profilePic}
+                alt="profile picture"
+                className="feed-profile-picture"
+              />
+            </a>
           </header>
         </div>
         <div className="w-full">
@@ -47,7 +49,9 @@ export default function PostCard({
                   justifyContent: "space-between",
                 }}
               >
-                <strong> {user.name} </strong>
+                <a href={`/page/${user._id}`}>
+                  <strong> {user.name} </strong>
+                </a>
                 <div className="relative">
                   {isOwn && (
                     <button
