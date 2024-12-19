@@ -2,27 +2,32 @@ import { useEffect, useState } from "react";
 import { useRoutes } from "react-router-dom";
 import routes from "./routes.jsx";
 import apiClient from "./../configs/axios.jsx";
+import { getCookie } from "./../utils/getCookie.jsx";
 import "./App.css";
 
 function App() {
-  const [mainUser, setMainUser] = useState(window.localStorage.getItem("id"));
-
   useEffect(() => {
     const locationUrl = window.location.pathname;
 
     if (!locationUrl.includes("/auth/")) {
-      if (!mainUser) {
+      if (!window.localStorage.getItem("id")) {
         window.localStorage.clear();
-        window.location.href = "/auth/login";
+        window.location.href = "/auth/register";
+
+        return;
       }
 
       const verifyAccessToken = async () => {
+        const refreshToken = getCookie("refresh-token");
+
         try {
-          await apiClient.put("/auth/refresh");
+          await apiClient.put("/auth/refresh", {
+            refreshToken,
+          });
         } catch (err) {
           document.cookie = "";
           window.localStorage.clear();
-          window.location.href = "/auth/login";
+          window.location.href = "/auth/register";
         }
       };
 

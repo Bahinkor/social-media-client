@@ -318,7 +318,6 @@ export default function Home() {
                 />
               </span>
               <div className="story-content">
-                Profile cover
                 <div>
                   <img
                     src="/images/profile-3.jpg"
