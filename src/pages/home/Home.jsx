@@ -36,6 +36,12 @@ export default function Home() {
     getUserData();
   }, []);
 
+  // func
+  const logoutHandler = () => {
+    localStorage.removeItem("id");
+    window.location.href = "/auth/login";
+  };
+
   return (
     <>
       {/* meta tags */}
@@ -131,7 +137,7 @@ export default function Home() {
                     />
                   </svg>
                 </div>
-                <div>Notifications</div>
+                <div onClick={logoutHandler}>Log out</div>
               </a>
             </div>
             <div>
