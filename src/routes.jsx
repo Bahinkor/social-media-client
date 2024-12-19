@@ -7,6 +7,7 @@ import UploadPost from "./pages/uploadPost/UploadPost.jsx";
 import EditProfile from "./pages/editProfile/EditProfile.jsx";
 import Home from "./pages/home/Home.jsx";
 import SavedPost from "./pages/savedPost/SavedPost.jsx";
+import NotFound from "./pages/notFound/NotFound.jsx";
 
 const routes = [
   { path: "/", element: <Home /> },
@@ -18,6 +19,7 @@ const routes = [
   { path: "/post", element: <UploadPost /> },
   { path: "/post/save", element: <SavedPost /> },
   { path: "/user/edit-profile", element: <EditProfile /> },
+  { path: "*", element: <NotFound /> },
 ];
 
 export default routes;
