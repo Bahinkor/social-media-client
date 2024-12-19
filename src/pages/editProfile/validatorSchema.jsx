@@ -22,6 +22,7 @@ const editProfileDataValidatorSchema = yup.object().shape({
     .string()
     .email("The email is required.")
     .required("The email is required."),
+  private: yup.boolean().required("The page type is required."),
 });
 
 export default editProfileDataValidatorSchema;

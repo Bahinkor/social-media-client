@@ -12,6 +12,7 @@ export default function EditProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
+  const [isPrivate, setIsPrivate] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
 
   // useEffect
@@ -24,6 +25,7 @@ export default function EditProfile() {
         setUserData(data);
         setName(data.name);
         setEmail(data.email);
+        setIsPrivate(data.private === true ? "private" : "public");
         setUsername(data.username);
       } catch (err) {
         new swal({
@@ -43,12 +45,14 @@ export default function EditProfile() {
       name,
       email,
       username,
+      private: isPrivate === "private",
     };
 
     const userDataAndProfilePicture = {
       name,
       email,
       username,
+      private: isPrivate === "private",
       profilePicture,
     };
 
@@ -202,6 +206,25 @@ export default function EditProfile() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                         />
+                      </div>
+                    </article>
+
+                    {/*private Input*/}
+                    <article className="edit-profile_input-card">
+                      <label htmlFor="profile-email" className="text-xs">
+                        Page type
+                      </label>
+                      <div className="profile-edit-input-card">
+                        <select
+                          className="profile-edit-input"
+                          value={
+                            isPrivate === "private" ? "private" : "public"
+                          }
+                          onChange={(e) => setIsPrivate(e.target.value)}
+                        >
+                          <option value="private">Private</option>
+                          <option value="public">Public</option>
+                        </select>
                       </div>
                     </article>
 
