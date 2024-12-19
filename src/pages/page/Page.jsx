@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import swal from "sweetalert2";
 import { Helmet } from "react-helmet";
 import apiClient from "./../../../configs/axios.jsx";
-import PostCard from "./../../components/PostCard.jsx";
+import PostCard from "../../components/postCard/PostCard.jsx";
+import Header from "./../../components/header/Header.jsx";
 import "./../../../public/css/styles.css";
 import "./../../../public/css/index.css";
 import "./../../../public/css/profile.css";
@@ -23,6 +24,10 @@ export default function Page() {
   const [commentContent, setCommentContent] = useState("");
   const [postIdForSendComment, setPostIdForSendComment] = useState(null);
   const [pageIdForSendComment, setPageIdForSendComment] = useState(null);
+
+  const profilePic = userData?.page.profilePicture
+    ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}`
+    : "/images/default-profile.jpg";
 
   // params
   const { userID } = useParams();
@@ -83,10 +88,6 @@ export default function Page() {
 
     fetchData();
   }, [userID]);
-
-  const profilePic = userData?.page.profilePicture
-    ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}`
-    : "/images/default-profile.jpg";
 
   const showCommentsModal = (postID, pageID) => {
     setIsOpenCommentsModal(true);
@@ -270,56 +271,7 @@ export default function Page() {
       {/* finish meta tags */}
 
       <div>
-        <header>
-          <nav className="w-full flex-between py-5 container">
-            <div>
-              <a href="/index.html" className="logo text-xl">
-                {" "}
-                Social Media{" "}
-              </a>
-            </div>
-            <div className="relative search-box rounded-xl flex items-center">
-              <span className="absolute search-icon top-2-5 left-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                  />
-                </svg>
-              </span>
-              <input
-                placeholder="Search in Social..."
-                type="text"
-                className="bg-transparent px-8 w-full h-full"
-              />
-            </div>
-            <div className="flex gap-6 items-center">
-              <a className="create-button bg-indigo-600" href="/post">
-                Create
-              </a>
-              <div className="w-12 h-12 rounded-full overflow-hidden rounded-full">
-                <button
-                  id="profileButton"
-                  className="w-full h-full bg-transparent border-none"
-                >
-                  <img
-                    src={profilePic}
-                    className="object-cover"
-                    alt="profile cover"
-                  />
-                </button>
-              </div>
-            </div>
-          </nav>
-        </header>
+        <Header userID={mainUser} profilePic={profilePic} />
 
         <main id="profile-container" className="container flex">
           {/*Content*/}

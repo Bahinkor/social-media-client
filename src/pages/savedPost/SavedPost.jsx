@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import swal from "sweetalert2";
 import apiClient from "./../../../configs/axios.jsx";
-import PostCard from "./../../components/PostCard.jsx";
+import PostCard from "../../components/postCard/PostCard.jsx";
+import Header from "./../../components/header/Header.jsx";
 import "./../../../public/css/styles.css";
 import "./../../../public/css/index.css";
 
@@ -16,6 +17,11 @@ export default function SearchPost() {
   const [commentContent, setCommentContent] = useState("");
   const [postIdForSendComment, setPostIdForSendComment] = useState(null);
   const [pageIdForSendComment, setPageIdForSendComment] = useState(null);
+  const [mainUser, setMainUser] = useState(window.localStorage.getItem("id"));
+
+  const profilePic = userData?.profilePicture
+    ? `${import.meta.env.VITE_BACKEND_URL}${userData.profilePicture}`
+    : "/images/default-profile.jpg";
 
   // useEffect
   useEffect(() => {
@@ -197,62 +203,7 @@ export default function SearchPost() {
       </Helmet>
 
       {/* template */}
-      <header>
-        <nav className="w-full flex-between py-5 container">
-          <div>
-            <a href="/index.html" className="logo text-xl">
-              {" "}
-              Social Media{" "}
-            </a>
-          </div>
-          <div className="relative search-box rounded-xl flex items-center">
-            <span className="absolute search-icon top-2-5 left-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                />
-              </svg>
-            </span>
-            <input
-              placeholder="Search in Social..."
-              type="text"
-              className="bg-transparent px-8 w-full h-full"
-            />
-          </div>
-          <div className="flex gap-6 items-center">
-            <a className="create-button bg-indigo-600" href="/post">
-              Create
-            </a>
-            <div className="w-12 h-12 rounded-full overflow-hidden rounded-full">
-              <a
-                href={`/page/${userData?._id}`}
-                id="profileButton"
-                className="w-full h-full bg-transparent border-none"
-              >
-                <img
-                  src={
-                    userData?.profilePicture
-                      ? `${import.meta.env.VITE_BACKEND_URL}${userData?.profilePicture}`
-                      : "/images/default-profile.jpg"
-                  }
-                  className="profile-pic"
-                  alt="profile picture"
-                  style={{ width: "48px", height: "48px" }}
-                />
-              </a>
-            </div>
-          </div>
-        </nav>
-      </header>
+      <Header userID={mainUser} profilePic={profilePic} />
 
       <main className="container my-8 flex gap-10">
         {/*Sidebar*/}
@@ -466,61 +417,62 @@ export default function SearchPost() {
         </aside>
 
         {/*Content*/}
-        <section id="bookmarks-container" className="flex flex-wrap gap-4"></section>
+        <section
+          id="bookmarks-container"
+          className="flex flex-wrap gap-4"
+        ></section>
 
         <section id="bookmark-content">
-          {
-            savedPosts.length ? (
-                savedPosts.map((post) => (
-                    <PostCard
-                        key={post._id}
-                        {...post}
-                        {...post.post}
-                        showComments={showCommentsModal}
-                        likePost={likePostHandler}
-                        disLikePost={disLikePostHandler}
-                        savePost={savePostHandler}
-                        unSavePost={unSavePostHandler}
-                        getComments={getPostCommentHandler}
-                        removePost={removePostHandler}
-                        isOwn={userData?.isOwn}
-                    />
-                ))
-            ) : (
-                <h2>No Post!</h2>
-            )
-          }
+          {savedPosts.length ? (
+            savedPosts.map((post) => (
+              <PostCard
+                key={post._id}
+                {...post}
+                {...post.post}
+                showComments={showCommentsModal}
+                likePost={likePostHandler}
+                disLikePost={disLikePostHandler}
+                savePost={savePostHandler}
+                unSavePost={unSavePostHandler}
+                getComments={getPostCommentHandler}
+                removePost={removePostHandler}
+                isOwn={userData?.isOwn}
+              />
+            ))
+          ) : (
+            <h2>No Post!</h2>
+          )}
         </section>
       </main>
 
       {/*Modal*/}
       <div
-          id="comments-modal"
-          className={`modal-screen comments-modal ${isOpenCommentsModal ? "visible" : ""}`}
+        id="comments-modal"
+        className={`modal-screen comments-modal ${isOpenCommentsModal ? "visible" : ""}`}
       >
         <div id="modal-card" style={{ height: "621px", overflowY: "scroll" }}>
           <div className="overflow-y-visible" id="comments_modal">
             <header
-                className="w-full border-b pb-4 flex-center text-center"
-                style={{ display: "flex", justifyContent: "space-between" }}
+              className="w-full border-b pb-4 flex-center text-center"
+              style={{ display: "flex", justifyContent: "space-between" }}
             >
               <p></p>
 
               <p>Comments</p>
 
               <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                  onClick={() => setIsOpenCommentsModal(false)}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-6 h-6"
+                onClick={() => setIsOpenCommentsModal(false)}
               >
                 <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18 18 6M6 6l12 12"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
                 />
               </svg>
             </header>
@@ -529,21 +481,21 @@ export default function SearchPost() {
                 <p className="text-sm text-gray-700">Add a comment:</p>
                 <form id="comment-form" action="#">
                   <div className="mt-2">
-                      <textarea
-                          name="content"
-                          className="w-full  bg-gray-100 p-5 rounded-lg font-light"
-                          placeholder="Write something to share..."
-                          value={commentContent}
-                          onChange={(e) => setCommentContent(e.target.value)}
-                      ></textarea>
+                    <textarea
+                      name="content"
+                      className="w-full  bg-gray-100 p-5 rounded-lg font-light"
+                      placeholder="Write something to share..."
+                      value={commentContent}
+                      onChange={(e) => setCommentContent(e.target.value)}
+                    ></textarea>
                   </div>
                   <div className="flex justify-end">
                     <button
-                        className="button success text-base max-w-max px-3 py-1.5"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sendCommentHandler(postIdForSendComment);
-                        }}
+                      className="button success text-base max-w-max px-3 py-1.5"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        sendCommentHandler(postIdForSendComment);
+                      }}
                     >
                       SUBMIT
                     </button>
@@ -557,52 +509,52 @@ export default function SearchPost() {
               </div>
 
               {isCommentsModelLoading ? (
-                  <h2>Loading...</h2>
+                <h2>Loading...</h2>
               ) : (
-                  <>
-                    {comments.length > 0 ? (
-                        comments.map((comment) => (
-                            <div
-                                key={comment._id}
-                                className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm"
-                            >
-                              <div className="flex items-center gap-2 mb-1">
-                                <img
-                                    src={
-                                      comment.user.profilePicture
-                                          ? `${import.meta.env.VITE_BACKEND_URL}${comment.user.profilePicture}`
-                                          : "/images/default-profile.jpg"
-                                    }
-                                    className="w-9 rounded-full"
-                                    alt="Profile Image"
-                                />
-                                <div>
-                              <span className="text-sm text-gray-600">
-                                {comment.user.name}
-                              </span>
-                                  <p className="text-xs text-gray-500">
-                                    @{comment.user.username}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="ml-6 pl-4 mt-4">
-                                <q>{comment.content}</q>
-                              </div>
-                              <div className="mt-4 flex-between">
-                                <div className="flex items-center gap-1">
-                                  <button className="flex items-center gap-1">
-                                    <span></span>
-                                    <span className="pb-1"></span>
-                                  </button>
-                                </div>
-                                <button></button>
-                              </div>
-                            </div>
-                        ))
-                    ) : (
-                        <h2>No Comment</h2>
-                    )}
-                  </>
+                <>
+                  {comments.length > 0 ? (
+                    comments.map((comment) => (
+                      <div
+                        key={comment._id}
+                        className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <img
+                            src={
+                              comment.user.profilePicture
+                                ? `${import.meta.env.VITE_BACKEND_URL}${comment.user.profilePicture}`
+                                : "/images/default-profile.jpg"
+                            }
+                            className="w-9 rounded-full"
+                            alt="Profile Image"
+                          />
+                          <div>
+                            <span className="text-sm text-gray-600">
+                              {comment.user.name}
+                            </span>
+                            <p className="text-xs text-gray-500">
+                              @{comment.user.username}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="ml-6 pl-4 mt-4">
+                          <q>{comment.content}</q>
+                        </div>
+                        <div className="mt-4 flex-between">
+                          <div className="flex items-center gap-1">
+                            <button className="flex items-center gap-1">
+                              <span></span>
+                              <span className="pb-1"></span>
+                            </button>
+                          </div>
+                          <button></button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <h2>No Comment</h2>
+                  )}
+                </>
               )}
             </footer>
           </div>

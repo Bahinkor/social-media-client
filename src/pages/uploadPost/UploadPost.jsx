@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import apiClient from "./../../../configs/axios.jsx";
 import swal from "sweetalert2";
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
 import uploadPostValidatorSchema from "./validatorSchema.jsx";
+import Header from "./../../components/header/Header.jsx";
 import "./../../../public/css/index.css";
 import "./../../../public/css/styles.css";
 import "./../../../public/css/profile.css";
@@ -13,6 +14,11 @@ export default function UploadPost() {
   const [media, setMedia] = useState(null);
   const [description, setDescription] = useState("");
   const [hashtags, setHashtags] = useState("");
+  const [mainUser, setMainUser] = useState(window.localStorage.getItem("id"));
+
+  const profilePic = userData?.profilePicture
+    ? `${import.meta.env.VITE_BACKEND_URL}${userData.profilePicture}`
+    : "/images/default-profile.jpg";
 
   // useEffect
   useEffect(() => {
@@ -106,61 +112,7 @@ export default function UploadPost() {
 
       {/* template */}
       <div className="post-upload-body">
-        <header>
-          <nav className="w-full flex-between  py-5 container">
-            <div>
-              <a className="logo text-xl" href="/">
-                Social Media
-              </a>
-            </div>
-            <div className="relative search-box rounded-xl flex items-center">
-              <span className="absolute search-icon top-2-5 left-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                  />
-                </svg>
-              </span>
-
-              <input
-                placeholder="Search in Social..."
-                type="text"
-                className="bg-transparent px-8 w-full h-full"
-              />
-            </div>
-            <div className="flex gap-6 items-center">
-              <a className="create-button bg-indigo-600" href="/post">
-                Create
-              </a>
-              <div className="w-12 h-12 rounded-full overflow-hidden rounded-full">
-                <a
-                  href={`/page/${userData?._id}`}
-                  id="profileButton"
-                  className="w-full h-full bg-transparent border-none"
-                >
-                  <img
-                    src={
-                      userData?.profilePicture
-                        ? `${import.meta.env.VITE_BACKEND_URL}${userData.profilePicture}`
-                        : "/images/default-profile.jpg"
-                    }
-                    className="object-cover"
-                    alt="profile cover"
-                  />
-                </a>
-              </div>
-            </div>
-          </nav>
-        </header>
+        <Header userID={mainUser} profilePic={profilePic} />
 
         {/*Main*/}
         <main id="post-upload-wrapper">
