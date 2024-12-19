@@ -21,7 +21,6 @@ export default function Page() {
   const [isCommentsModelLoading, setIsCommentsModelLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const [commentContent, setCommentContent] = useState("");
-  const [commentParentID, setCommentParentID] = useState("");
   const [postIdForSendComment, setPostIdForSendComment] = useState(null);
   const [pageIdForSendComment, setPageIdForSendComment] = useState(null);
 

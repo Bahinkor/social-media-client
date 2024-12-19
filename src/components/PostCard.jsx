@@ -4,7 +4,7 @@ export default function PostCard({
   _id,
   description,
   hasLike,
-  hasSave,
+  hasSave = true,
   media,
   user,
   showComments,

@@ -10,6 +10,12 @@ export default function SearchPost() {
   // state
   const [userData, setUserData] = useState(null);
   const [savedPosts, setSavedPosts] = useState([]);
+  const [isOpenCommentsModal, setIsOpenCommentsModal] = useState(false);
+  const [isCommentsModelLoading, setIsCommentsModelLoading] = useState(true);
+  const [comments, setComments] = useState([]);
+  const [commentContent, setCommentContent] = useState("");
+  const [postIdForSendComment, setPostIdForSendComment] = useState(null);
+  const [pageIdForSendComment, setPageIdForSendComment] = useState(null);
 
   // useEffect
   useEffect(() => {
@@ -40,6 +46,148 @@ export default function SearchPost() {
 
     getUserData();
   }, []);
+
+  // func
+  const showCommentsModal = (postID, pageID) => {
+    setIsOpenCommentsModal(true);
+    setPostIdForSendComment(postID);
+    setPageIdForSendComment(pageID);
+  };
+
+  const likePostHandler = async (e, postID) => {
+    e.preventDefault();
+
+    const postIDObj = {
+      postID,
+    };
+
+    try {
+      await apiClient.post("/post/like", postIDObj);
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const disLikePostHandler = async (e, postID) => {
+    e.preventDefault();
+
+    const postIDObj = {
+      postID,
+    };
+
+    try {
+      await apiClient.delete("/post/dislike", {
+        data: postIDObj,
+      });
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const savePostHandler = async (e, postID) => {
+    e.preventDefault();
+
+    const postIDObj = {
+      postID,
+    };
+
+    try {
+      await apiClient.post("/post/save", postIDObj);
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const unSavePostHandler = async (e, postID) => {
+    e.preventDefault();
+
+    const postIDObj = {
+      postID,
+    };
+
+    try {
+      await apiClient.delete("/post/unsave", {
+        data: postIDObj,
+      });
+
+      window.location.reload();
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const getPostCommentHandler = async (postID, pageID) => {
+    try {
+      const res = await apiClient.get(`/post/${postID}/comments?p=${pageID}`);
+      const data = res.data;
+
+      setComments(data);
+      setIsCommentsModelLoading(false);
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const removePostHandler = async (postID) => {
+    try {
+      const res = await apiClient.delete(`/post/${postID}/remove`);
+
+      if (res.status === 200) {
+        new swal({
+          title: "Success",
+          text: "Remove post successfully.",
+          icon: "success",
+          button: "ok",
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    } catch (err) {
+      new swal({
+        title: "Error!",
+        text: "Something went wrong!",
+        icon: "error",
+        button: "ok",
+      });
+    }
+  };
+
+  const sendCommentHandler = async (postID) => {
+    try {
+      const res = await apiClient.post("/post/new-comment", {
+        postID,
+        content: commentContent,
+      });
+
+      if (res.status === 201) {
+        new swal({
+          title: "Success",
+          text: "Send comment successfully.",
+          icon: "success",
+          button: "ok",
+        });
+
+        setCommentContent("");
+        await getPostCommentHandler(postID, pageIdForSendComment);
+      } else {
+        new swal({
+          title: "Error!",
+          text: "Unknown error!",
+          icon: "error",
+          button: "ok",
+        });
+      }
+    } catch (err) {
+      new swal({
+        title: "Error!",
+        text: "Something went wrong!",
+        icon: "error",
+        button: "ok",
+      });
+    }
+  };
 
   return (
     <>
@@ -318,16 +466,148 @@ export default function SearchPost() {
         </aside>
 
         {/*Content*/}
-        <section id="bookmarks-container" className="flex flex-wrap gap-4">
+        <section id="bookmarks-container" className="flex flex-wrap gap-4"></section>
+
+        <section id="bookmark-content">
           {
-            savedPosts.map(post => (
-                <PostCard key={post._id} />
-            ))
+            savedPosts.length ? (
+                savedPosts.map((post) => (
+                    <PostCard
+                        key={post._id}
+                        {...post}
+                        {...post.post}
+                        showComments={showCommentsModal}
+                        likePost={likePostHandler}
+                        disLikePost={disLikePostHandler}
+                        savePost={savePostHandler}
+                        unSavePost={unSavePostHandler}
+                        getComments={getPostCommentHandler}
+                        removePost={removePostHandler}
+                        isOwn={userData?.isOwn}
+                    />
+                ))
+            ) : (
+                <h2>No Post!</h2>
+            )
           }
         </section>
-
-        <section id="bookmark-content"></section>
       </main>
+
+      {/*Modal*/}
+      <div
+          id="comments-modal"
+          className={`modal-screen comments-modal ${isOpenCommentsModal ? "visible" : ""}`}
+      >
+        <div id="modal-card" style={{ height: "621px", overflowY: "scroll" }}>
+          <div className="overflow-y-visible" id="comments_modal">
+            <header
+                className="w-full border-b pb-4 flex-center text-center"
+                style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <p></p>
+
+              <p>Comments</p>
+
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                  onClick={() => setIsOpenCommentsModal(false)}
+              >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </header>
+            <main className="mt-4">
+              <div>
+                <p className="text-sm text-gray-700">Add a comment:</p>
+                <form id="comment-form" action="#">
+                  <div className="mt-2">
+                      <textarea
+                          name="content"
+                          className="w-full  bg-gray-100 p-5 rounded-lg font-light"
+                          placeholder="Write something to share..."
+                          value={commentContent}
+                          onChange={(e) => setCommentContent(e.target.value)}
+                      ></textarea>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                        className="button success text-base max-w-max px-3 py-1.5"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sendCommentHandler(postIdForSendComment);
+                        }}
+                    >
+                      SUBMIT
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </main>
+            <footer className="mt-5 pt-5 border-t">
+              <div>
+                <p className="text-sm text-gray-600 my-3">Comments</p>
+              </div>
+
+              {isCommentsModelLoading ? (
+                  <h2>Loading...</h2>
+              ) : (
+                  <>
+                    {comments.length > 0 ? (
+                        comments.map((comment) => (
+                            <div
+                                key={comment._id}
+                                className="border bg-gray-100 p-5 my-3 rounded-md shadow-sm"
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <img
+                                    src={
+                                      comment.user.profilePicture
+                                          ? `${import.meta.env.VITE_BACKEND_URL}${comment.user.profilePicture}`
+                                          : "/images/default-profile.jpg"
+                                    }
+                                    className="w-9 rounded-full"
+                                    alt="Profile Image"
+                                />
+                                <div>
+                              <span className="text-sm text-gray-600">
+                                {comment.user.name}
+                              </span>
+                                  <p className="text-xs text-gray-500">
+                                    @{comment.user.username}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="ml-6 pl-4 mt-4">
+                                <q>{comment.content}</q>
+                              </div>
+                              <div className="mt-4 flex-between">
+                                <div className="flex items-center gap-1">
+                                  <button className="flex items-center gap-1">
+                                    <span></span>
+                                    <span className="pb-1"></span>
+                                  </button>
+                                </div>
+                                <button></button>
+                              </div>
+                            </div>
+                        ))
+                    ) : (
+                        <h2>No Comment</h2>
+                    )}
+                  </>
+              )}
+            </footer>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
