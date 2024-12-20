@@ -10,6 +10,7 @@ export default function Home() {
   // state
   const [userData, setUserData] = useState(null);
   const [mainUser, setMainUser] = useState(window.localStorage.getItem("id"));
+  const [followRequests, setFollowRequests] = useState([]);
 
   const profilePic = userData?.profilePicture
     ? `${import.meta.env.VITE_BACKEND_URL}${userData.profilePicture}`
@@ -23,6 +24,18 @@ export default function Home() {
         const data = res.data;
 
         setUserData(data.user);
+      } catch (err) {
+        new swal({
+          title: "Error!",
+          icon: "error",
+          text: "Something went wrong",
+          button: "ok",
+        });
+      }
+
+      try {
+        const res = await apiClient.get("/page/request/get");
+        setFollowRequests(res.data);
       } catch (err) {
         new swal({
           title: "Error!",
@@ -843,139 +856,74 @@ export default function Home() {
 
         {/*(Right Sidebar) Messages, Requests*/}
         <aside id="right-sidebar">
-          {/*Messages*/}
-          <section
-            id="messages"
-            className="w-full p-4 bg-white rounded-lg shadow"
-          >
-            <header>
-              <div className="flex justify-between">
-                <p>
-                  <strong> Messages </strong>
-                </p>
-                <button className="max-w-max">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+          {/*Requests*/}
+          <section id="requests">
+            <h4>Requests</h4>
+            <section>
+              <article className="request-card">
+                <div className="flex mb-3 items-center gap-3">
+                  <div className="w-10 h-10 rounded-full overflow-hidden">
+                    <img
+                      src="/images/profile-1.jpg"
+                      className="object-cover w-full h-full"
+                      alt=""
                     />
-                  </svg>
-                </button>
-              </div>
-              <div className="mt-4">
-                <div id="direct-search">
-                  <span className="absolute top-2-5 left-3 text-gray-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-4 h-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                      />
-                    </svg>
-                  </span>
-                  <input
-                    type="text"
-                    id="direact-search_input"
-                    className="px-8"
-                    placeholder="Search messages.."
-                  />
+                  </div>
+                  <div>
+                    <p className="text-sm font-Poppins-SemiBold">
+                      Jeniffer Lowernce
+                    </p>
+                    <p className="text-xs text-gray-500">2 Mutual friends</p>
+                  </div>
                 </div>
-              </div>
-
-              <div id="direct-buttons">
-                <button className="direct-button active-button">Primary</button>
-                <button className="direct-button">Primary</button>
-                <button className="direct-button text-indigo-700">
-                  Requests(7)
-                </button>
-              </div>
-            </header>
-            <main className="mt-4">
-              <article className="direct-chat">
-                <div className="w-12 flex-center">
-                  <img
-                    src="/images/profile-10.jpg"
-                    className="rounded-full object-cover"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <p className="direct-username">
-                    <strong> Miranda </strong>
-                  </p>
-                  <p className="direct-sm-message readed-msg">
-                    Lol, Really? 😂
-                  </p>
+                <div className="flex items-center gap-3">
+                  <button className="accept-button max-w-max">Accept</button>
+                  <button className="decline-button max-w-max">Decline</button>
                 </div>
               </article>
 
-              <article className="direct-chat">
-                <div className="w-12 flex-center">
-                  <img
-                    src="/images/profile-12.jpg"
-                    className="rounded-full object-cover"
-                    alt=""
-                  />
+              <article className="request-card">
+                <div className="flex mb-3 items-center gap-3">
+                  <div className="w-10 h-10 rounded-full overflow-hidden">
+                    <img
+                      src="/images/profile-4.jpg"
+                      className="object-cover w-full h-full"
+                      alt=""
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm font-Poppins-SemiBold">
+                      Elena Rashidi
+                    </p>
+                    <p className="text-xs text-gray-500">6 Mutual friends</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="direct-username">
-                    <strong> Lucy Goggins </strong>
-                  </p>
-                  <p className="direct-sm-message unread-messages">
-                    +2 new messages
-                  </p>
-                </div>
-              </article>
-
-              <article className="direct-chat">
-                <div className="w-12 flex-center">
-                  <img
-                    src="/images/profile-4.jpg"
-                    className="rounded-full object-cover"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <p className="direct-username">
-                    <strong> Jane doe </strong>
-                  </p>
-                  <p className="direct-sm-message unread-messages">ok</p>
+                <div className="flex items-center gap-3">
+                  <button className="accept-button max-w-max">Accept</button>
+                  <button className="decline-button max-w-max">Decline</button>
                 </div>
               </article>
 
-              <article className="direct-chat">
-                <div className="w-12 flex-center">
-                  <img
-                    src="/images/profile-2.jpg"
-                    className="rounded-full object-cover"
-                    alt=""
-                  />
+              <article className="request-card">
+                <div className="flex mb-3 items-center gap-3">
+                  <div className="w-10 h-10 rounded-full overflow-hidden">
+                    <img
+                      src="/images/profile-14.jpg"
+                      className="object-cover w-full h-full"
+                      alt=""
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm font-Poppins-SemiBold">shabnam.494</p>
+                    <p className="text-xs text-gray-500">14 Mutual friends</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="direct-username">
-                    <strong> Edem Quist </strong>
-                  </p>
-                  <p className="direct-sm-message unread-messages">
-                    why'd you mean?
-                  </p>
+                <div className="flex items-center gap-3">
+                  <button className="accept-button max-w-max">Accept</button>
+                  <button className="decline-button max-w-max">Decline</button>
                 </div>
               </article>
-            </main>
+            </section>
           </section>
 
           {/*Popular Posts*/}
@@ -1190,76 +1138,6 @@ export default function Home() {
                 </div>
               </article>
             </main>
-          </section>
-
-          {/*Requests*/}
-          <section id="requests">
-            <h4>Requests</h4>
-            <section>
-              <article className="request-card">
-                <div className="flex mb-3 items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img
-                      src="/images/profile-1.jpg"
-                      className="object-cover w-full h-full"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-Poppins-SemiBold">
-                      Jeniffer Lowernce
-                    </p>
-                    <p className="text-xs text-gray-500">2 Mutual friends</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button className="accept-button max-w-max">Accept</button>
-                  <button className="decline-button max-w-max">Decline</button>
-                </div>
-              </article>
-
-              <article className="request-card">
-                <div className="flex mb-3 items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img
-                      src="/images/profile-4.jpg"
-                      className="object-cover w-full h-full"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-Poppins-SemiBold">
-                      Elena Rashidi
-                    </p>
-                    <p className="text-xs text-gray-500">6 Mutual friends</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button className="accept-button max-w-max">Accept</button>
-                  <button className="decline-button max-w-max">Decline</button>
-                </div>
-              </article>
-
-              <article className="request-card">
-                <div className="flex mb-3 items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img
-                      src="/images/profile-14.jpg"
-                      className="object-cover w-full h-full"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-Poppins-SemiBold">shabnam.494</p>
-                    <p className="text-xs text-gray-500">14 Mutual friends</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button className="accept-button max-w-max">Accept</button>
-                  <button className="decline-button max-w-max">Decline</button>
-                </div>
-              </article>
-            </section>
           </section>
         </aside>
       </main>

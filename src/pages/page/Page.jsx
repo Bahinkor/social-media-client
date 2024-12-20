@@ -24,6 +24,7 @@ export default function Page() {
   const [commentContent, setCommentContent] = useState("");
   const [postIdForSendComment, setPostIdForSendComment] = useState(null);
   const [pageIdForSendComment, setPageIdForSendComment] = useState(null);
+  const [isSendFollowRequest, setIsSendFollowRequest] = useState(false);
 
   const profilePic = userData?.page.profilePicture
     ? `${import.meta.env.VITE_BACKEND_URL}${userData.page.profilePicture}`
@@ -48,6 +49,7 @@ export default function Page() {
         }
 
         setUserData(res.data);
+        setIsSendFollowRequest(res.data.followRequest);
       } catch (err) {
         new swal({
           title: "Error!",
@@ -262,6 +264,31 @@ export default function Page() {
     }
   };
 
+  const followRequestHandler = async (e) => {
+    e.preventDefault();
+    setIsSendFollowRequest(true);
+
+    try {
+      const res = await apiClient.post(`/page/${userID}/request`);
+
+      if (res.status === 201) {
+        new swal({
+          title: "Success",
+          text: "Send request successfully.",
+          icon: "success",
+          button: "ok",
+        });
+      }
+    } catch (err) {
+      new swal({
+        title: "Error!",
+        text: "Something went wrong!",
+        icon: "error",
+        button: "ok",
+      });
+    }
+  };
+
   return (
     <>
       {/* start meta tags */}
@@ -376,16 +403,35 @@ export default function Page() {
                       </form>
                     )}
 
-                    {!userData?.followed && !userData?.isOwn && (
-                      <form method="post" action="#">
-                        <button
-                          className="unfollow-button font-Poppins-Bold"
-                          onClick={followUserHandler}
-                        >
-                          Follow
-                        </button>
-                      </form>
-                    )}
+                    {!userData?.followed &&
+                      !userData?.isOwn &&
+                      (userData?.page.private ? (
+                        isSendFollowRequest ? (
+                          <form method="post" action="#">
+                            <button className="unfollow-button font-Poppins-Bold">
+                              Request Sended (Pending...)
+                            </button>
+                          </form>
+                        ) : (
+                          <form method="post" action="#">
+                            <button
+                              className="unfollow-button font-Poppins-Bold"
+                              onClick={followRequestHandler}
+                            >
+                              Request
+                            </button>
+                          </form>
+                        )
+                      ) : (
+                        <form method="post" action="#">
+                          <button
+                            className="unfollow-button font-Poppins-Bold"
+                            onClick={followUserHandler}
+                          >
+                            Follow
+                          </button>
+                        </form>
+                      ))}
                   </div>
                 </div>
               </main>
