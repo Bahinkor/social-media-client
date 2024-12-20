@@ -860,69 +860,47 @@ export default function Home() {
           <section id="requests">
             <h4>Requests</h4>
             <section>
-              <article className="request-card">
-                <div className="flex mb-3 items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img
-                      src="/images/profile-1.jpg"
-                      className="object-cover w-full h-full"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-Poppins-SemiBold">
-                      Jeniffer Lowernce
-                    </p>
-                    <p className="text-xs text-gray-500">2 Mutual friends</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button className="accept-button max-w-max">Accept</button>
-                  <button className="decline-button max-w-max">Decline</button>
-                </div>
-              </article>
-
-              <article className="request-card">
-                <div className="flex mb-3 items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img
-                      src="/images/profile-4.jpg"
-                      className="object-cover w-full h-full"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-Poppins-SemiBold">
-                      Elena Rashidi
-                    </p>
-                    <p className="text-xs text-gray-500">6 Mutual friends</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button className="accept-button max-w-max">Accept</button>
-                  <button className="decline-button max-w-max">Decline</button>
-                </div>
-              </article>
-
-              <article className="request-card">
-                <div className="flex mb-3 items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img
-                      src="/images/profile-14.jpg"
-                      className="object-cover w-full h-full"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm font-Poppins-SemiBold">shabnam.494</p>
-                    <p className="text-xs text-gray-500">14 Mutual friends</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button className="accept-button max-w-max">Accept</button>
-                  <button className="decline-button max-w-max">Decline</button>
-                </div>
-              </article>
+              {followRequests.length ? (
+                followRequests.map((request) => (
+                  <article className="request-card">
+                    <div className="flex mb-3 items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden">
+                        <a href={`/page/${request.from._id}`}>
+                          <img
+                            src={
+                              request.from.profilePicture
+                                ? `${import.meta.env.VITE_BACKEND_URL}${request.from.profilePicture}`
+                                : "/images/profile-1.jpg"
+                            }
+                            className="object-cover w-full h-full"
+                            alt="profile picture"
+                          />
+                        </a>
+                      </div>
+                      <div>
+                        <a href={`/page/${request.from._id}`}>
+                          <p className="text-sm font-Poppins-SemiBold">
+                            {request.from.name}
+                          </p>
+                        </a>
+                        <p className="text-xs text-gray-500">
+                          @{request.from.username}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button className="accept-button max-w-max">
+                        Accept
+                      </button>
+                      <button className="decline-button max-w-max">
+                        Decline
+                      </button>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <h2>No Request</h2>
+              )}
             </section>
           </section>
 
