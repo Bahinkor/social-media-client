@@ -77,7 +77,7 @@ export default function Home() {
     try {
       const res = await apiClient.delete(`page/${pageID}/request/reject`);
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         const res = await apiClient.get("/page/request/get");
         setFollowRequests(res.data);
       }

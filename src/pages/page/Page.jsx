@@ -264,12 +264,14 @@ export default function Page() {
     }
   };
 
-  const followRequestHandler = async (e) => {
+  const followRequestHandler = async (e, targetUserID) => {
     e.preventDefault();
     setIsSendFollowRequest(true);
 
     try {
-      const res = await apiClient.post(`/page/${userID}/request`);
+      const res = await apiClient.post(
+        `/page/${targetUserID || userID}/request`,
+      );
 
       if (res.status === 201) {
         new swal({
@@ -852,6 +854,10 @@ export default function Page() {
                         </button>
                       ) : mainUser === follower._id ? (
                         <button className="" type="hidden"></button>
+                      ) : follower.private ? (
+                        <button className="follow-button text-xs">
+                          Private page
+                        </button>
                       ) : (
                         <button
                           className="follow-button text-xs"
@@ -945,6 +951,10 @@ export default function Page() {
                         </button>
                       ) : mainUser === following._id ? (
                         <button className="" type="hidden"></button>
+                      ) : following.private ? (
+                        <button className="follow-button text-xs">
+                          Private page
+                        </button>
                       ) : (
                         <button
                           className="follow-button text-xs"
