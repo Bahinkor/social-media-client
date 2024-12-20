@@ -55,6 +55,42 @@ export default function Home() {
     window.location.href = "/auth/login";
   };
 
+  const acceptFollowRequestHandler = async (pageID) => {
+    try {
+      const res = await apiClient.post(`page/${pageID}/request/accept`);
+
+      if (res.status === 201) {
+        const res = await apiClient.get("/page/request/get");
+        setFollowRequests(res.data);
+      }
+    } catch (err) {
+      new swal({
+        title: "Error!",
+        icon: "error",
+        text: "Something went wrong",
+        button: "ok",
+      });
+    }
+  };
+
+  const rejectFollowRequestHandler = async (pageID) => {
+    try {
+      const res = await apiClient.delete(`page/${pageID}/request/reject`);
+
+      if (res.status === 201) {
+        const res = await apiClient.get("/page/request/get");
+        setFollowRequests(res.data);
+      }
+    } catch (err) {
+      new swal({
+        title: "Error!",
+        icon: "error",
+        text: "Something went wrong",
+        button: "ok",
+      });
+    }
+  };
+
   return (
     <>
       {/* meta tags */}
@@ -889,10 +925,20 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <button className="accept-button max-w-max">
+                      <button
+                        className="accept-button max-w-max"
+                        onClick={() =>
+                          acceptFollowRequestHandler(request.from._id)
+                        }
+                      >
                         Accept
                       </button>
-                      <button className="decline-button max-w-max">
+                      <button
+                        className="decline-button max-w-max"
+                        onClick={() =>
+                          rejectFollowRequestHandler(request.from._id)
+                        }
+                      >
                         Decline
                       </button>
                     </div>

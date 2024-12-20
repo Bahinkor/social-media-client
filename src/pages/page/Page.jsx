@@ -818,18 +818,22 @@ export default function Page() {
                     <div className="flex items-center gap-1">
                       <div className="flex items-center gap-2">
                         <div className="w-12 h-12 rounded-full overflow-hidden">
-                          <img
-                            src={
-                              follower.profilePicture
-                                ? `${import.meta.env.VITE_BACKEND_URL}${follower.profilePicture}`
-                                : "/images/default-profile.jpg"
-                            }
-                            className="w-full object-cover h-full"
-                            alt="profile image"
-                          />
+                          <a href={`/page/${follower._id}`}>
+                            <img
+                              src={
+                                follower.profilePicture
+                                  ? `${import.meta.env.VITE_BACKEND_URL}${follower.profilePicture}`
+                                  : "/images/default-profile.jpg"
+                              }
+                              className="w-full object-cover h-full"
+                              alt="profile image"
+                            />
+                          </a>
                         </div>
                         <div>
-                          <h6 className="">{follower.name}</h6>
+                          <a href={`/page/${follower._id}`}>
+                            <h6 className="">{follower.name}</h6>
+                          </a>
                           <p className="text-sm font-Poppins-Light text-gray-600">
                             @{follower.username}
                           </p>
@@ -907,18 +911,22 @@ export default function Page() {
                     <div className="flex items-center gap-1">
                       <div className="flex items-center gap-2">
                         <div className="w-12 h-12 rounded-full overflow-hidden">
-                          <img
-                            src={
-                              following.profilePicture
-                                ? `${import.meta.env.VITE_BACKEND_URL}${following.profilePicture}`
-                                : "/images/default-profile.jpg"
-                            }
-                            className="w-full object-cover h-full"
-                            alt="profile image"
-                          />
+                          <a href={`/page/${following._id}`}>
+                            <img
+                              src={
+                                following.profilePicture
+                                  ? `${import.meta.env.VITE_BACKEND_URL}${following.profilePicture}`
+                                  : "/images/default-profile.jpg"
+                              }
+                              className="w-full object-cover h-full"
+                              alt="profile image"
+                            />
+                          </a>
                         </div>
                         <div>
-                          <h6 className="">{following.name}</h6>
+                          <a href={`/page/${following._id}`}>
+                            <h6 className="">{following.name}</h6>
+                          </a>
                           <p className="text-sm font-Poppins-Light text-gray-600">
                             @{following.username}
                           </p>
